@@ -1,3 +1,5 @@
+const assets = '.less|.svg|.png|.jpg|.svg|.css|.scss';
+
 module.exports = {
   printWidth: 80, // 超过最大值换行
   tabWidth: 2, // 缩进字节数
@@ -10,6 +12,28 @@ module.exports = {
   endOfLine: 'auto', // 结尾是 \n \r \n\r auto
   jsxSingleQuote: false, // 在jsx中使用单引号代替双引号
   trailingComma: 'all', // 在对象或数组最后一个元素后面是否加逗号（在ES5中加尾逗号）
+  // 大括号中间的空格
+  singleAttributePerLine: true,
+  bracketSameLine: true,
+  plugins: [
+    'prettier-plugin-css-order',
+    'prettier-plugin-packagejson',
+    '@trivago/prettier-plugin-sort-imports',
+  ],
+  importOrder: [
+    '<THIRD_PARTY_MODULES>',
+    `^@/(.*)(?<!${assets})$`,
+    `^[(./|../)](.*)(?<!${assets})$`,
+    `${assets}$`,
+  ],
+  importOrderSeparation: true,
+  importOrderSortSpecifiers: true,
+  importOrderParserPlugins: [
+    'typescript',
+    'classProperties',
+    'decorators-legacy',
+    'jsx',
+  ],
   overrides: [
     {
       files: '*.html',

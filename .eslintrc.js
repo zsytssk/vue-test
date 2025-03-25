@@ -3,16 +3,16 @@ module.exports = {
   env: {
     browser: true,
     node: true,
-    es2021: true
+    es2021: true,
   },
   parser: 'vue-eslint-parser',
   extends: [
+    'prettier',
     'eslint:recommended',
     'plugin:vue/vue3-recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
     // eslint-config-prettier 的缩写
-    'prettier'
     // 'vue-global-api'
   ],
   parserOptions: {
@@ -20,8 +20,8 @@ module.exports = {
     parser: '@typescript-eslint/parser',
     sourceType: 'module',
     ecmaFeatures: {
-      jsx: true
-    }
+      jsx: true,
+    },
   },
   // eslint-plugin-vue @typescript-eslint/eslint-plugin eslint-plugin-prettier的缩写
   plugins: ['vue', '@typescript-eslint', 'prettier'],
@@ -39,12 +39,12 @@ module.exports = {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     'vue/multi-word-component-names': 'off',
     'vue/no-mutating-props': 'off',
-    'no-undef': 'off'
+    'no-undef': 'off',
   },
   globals: {
     defineProps: 'readonly',
     defineEmits: 'readonly',
     defineExpose: 'readonly',
-    withDefaults: 'readonly'
-  }
+    withDefaults: 'readonly',
+  },
 }

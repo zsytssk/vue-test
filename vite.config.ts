@@ -1,15 +1,11 @@
-import { ConfigEnv, loadEnv } from "vite";
-import vue from "@vitejs/plugin-vue";
+import vue from '@vitejs/plugin-vue'
+import { ConfigEnv, loadEnv } from 'vite'
+
 import WaPosition from './script/waPosition'
 
-// https://vite.dev/config/
-
-export default ({ command, mode }:ConfigEnv) => {
-  const env = loadEnv(mode, process.cwd());
+export default ({ command, mode }: ConfigEnv) => {
+  const env = loadEnv(mode, process.cwd())
   return {
-    plugins: [
-      env.VITE_POSITION === 'open' && WaPosition(),
-      vue()
-    ],
-  };
-};
+    plugins: [env.VITE_POSITION === 'open' && WaPosition(), vue()],
+  }
+}
