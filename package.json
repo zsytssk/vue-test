@@ -5,6 +5,8 @@
   "scripts": {
     "build": "vue-tsc -b && vite build",
     "dev": "vite",
+    "lint": "eslint src --fix --ext .ts,.tsx,.vue,.js,.jsx,",
+    "lint:prettier": "prettier --write src",
     "preview": "vite preview"
   },
   "dependencies": {
