@@ -1,47 +1,65 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
-defineProps<{ msg: string }>()
+import { getCameraId, scanCode, stopScan } from '../utils/html5-qrcode'
 
-const count = ref(0)
+const resultRef = ref<HTMLDivElement>()
+defineProps<{}>()
+
+const videoRef = ref<HTMLVideoElement>()
+const start = async () => {
+  const [err, cameraId] = await getCameraId()
+
+  if (err) {
+    console.error(cameraId)
+    return
+  }
+  const [err2, str2] = await scanCode(cameraId, 'reader')
+  if (err2) {
+    console.error(str2)
+    return
+  }
+  if (resultRef.value) {
+    resultRef.value.innerHTML = str2
+  }
+}
+const stop = () => {
+  stopScan()
+}
+
+onMounted(() => {
+  if (!videoRef.value) {
+    return
+  }
+})
 </script>
 
 <template>
-  <h1>{{ msg }}</h1>
-
+  <div id="reader"></div>
+  <div ref="resultRef"></div>
   <div class="card">
     <button
       type="button"
-      @click="count++">
-      count is {{ count }}
+      @click="start">
+      start
     </button>
-    <p>
-      Edit
-      <code>components/HelloWorld.vue</code> to test HMR
-    </p>
+    <button
+      type="button"
+      @click="stop">
+      stop
+    </button>
   </div>
-
-  <p>
-    Check out
-    <a
-      href="https://vuejs.org/guide/quick-start.html#local"
-      target="_blank"
-      >create-vue</a
-    >, the official Vue + Vite starter
-  </p>
-  <p>
-    Learn more about IDE Support for Vue in the
-    <a
-      href="https://vuejs.org/guide/scaling-up/tooling.html#ide-support"
-      target="_blank"
-      >Vue Docs Scaling up Guide</a
-    >.
-  </p>
-  <p class="read-the-docs">Click on the Vite and Vue logos to learn more</p>
 </template>
 
 <style scoped>
-.read-the-docs {
-  color: #888;
+#reader {
+  background: #fff;
+  width: 600px;
+  height: 600px;
+}
+.card {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
 </style>
