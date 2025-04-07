@@ -9,7 +9,8 @@ export function getCameraId() {
       return [true, '没有找到相机'] as const
     })
     .catch((err) => {
-      return [true, err.message] as const
+      const msg = err.message ? err.message : err
+      return [true, msg] as const
     })
 }
 
@@ -56,7 +57,7 @@ export function scanFile(elementId: string, imageFile: File) {
 
 export async function stopScan() {
   if (html5QrCode) {
-    html5QrCode.clear()
-    return html5QrCode.stop()
+    await html5QrCode.stop()
+    return html5QrCode.clear()
   }
 }

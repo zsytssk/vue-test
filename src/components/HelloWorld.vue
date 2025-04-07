@@ -1,31 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 
-import { getCameraId, scanCode, stopScan } from '../utils/html5-qrcode'
-
-const resultRef = ref<HTMLDivElement>()
 defineProps<{}>()
 
 const videoRef = ref<HTMLVideoElement>()
-const start = async () => {
-  const [err, cameraId] = await getCameraId()
-
-  if (err) {
-    console.error(cameraId)
-    return
-  }
-  const [err2, str2] = await scanCode(cameraId, 'reader')
-  if (err2) {
-    console.error(str2)
-    return
-  }
-  if (resultRef.value) {
-    resultRef.value.innerHTML = str2
-  }
-}
-const stop = () => {
-  stopScan()
-}
+const start = () => {}
+const stop = () => {}
 
 onMounted(() => {
   if (!videoRef.value) {
@@ -36,7 +16,7 @@ onMounted(() => {
 
 <template>
   <div id="reader"></div>
-  <div ref="resultRef"></div>
+  <div id="result"></div>
   <div class="card">
     <button
       type="button"
@@ -52,14 +32,10 @@ onMounted(() => {
 </template>
 
 <style scoped>
-#reader {
-  background: #fff;
-  width: 600px;
-  height: 600px;
+.read-the-docs {
+  color: #888;
 }
-.card {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
+video {
+  /* background-color: red; */
 }
 </style>
