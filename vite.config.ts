@@ -3,9 +3,10 @@ import { ConfigEnv, loadEnv } from 'vite'
 
 import WaPosition from './script/waPosition'
 
-export default ({ command, mode }: ConfigEnv) => {
+export default ({ mode }: ConfigEnv) => {
   const env = loadEnv(mode, process.cwd())
   return {
+    base: './',
     server: {
       // https: true,
       host: '0.0.0.0',

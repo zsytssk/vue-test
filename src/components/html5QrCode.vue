@@ -12,7 +12,7 @@ defineProps<{}>()
 defineOptions({ name: 'HTML5-Qrcode' })
 
 const resultText = ref('')
-const inputFile = ref<HTMLVideoElement>()
+const inputFile = ref<HTMLInputElement>()
 const startScanCamera = async () => {
   const [err, cameraId] = await getCameraId()
 
@@ -28,9 +28,8 @@ const startScanCamera = async () => {
   resultText.value = str2
 }
 
-const uploadFile = () => {
+const uploadFile = (inputEle?: HTMLInputElement) => {
   return new Promise<[boolean, string | File]>((resolve) => {
-    const inputEle = inputFile.value
     if (!inputEle) {
       return resolve([true, 'cant find input ele for upload!'] as const)
     }
@@ -51,7 +50,7 @@ const uploadFile = () => {
 }
 
 const startScanFile = async () => {
-  const [err, file] = await uploadFile()
+  const [err, file] = await uploadFile(inputFile.value)
   if (err) {
     console.error(file)
     return
@@ -131,6 +130,7 @@ onMounted(() => {
       background: #fff;
       width: 600px;
       height: 600px;
+      overflow: hidden;
     }
     .card {
       display: flex;

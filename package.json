@@ -7,6 +7,7 @@
     "dev": "vite",
     "lint": "eslint src --fix --ext .ts,.tsx,.vue,.js,.jsx,",
     "lint:prettier": "prettier --write src",
+    "local-deploy": "./script/deploy.sh",
     "preview": "vite preview"
   },
   "dependencies": {
