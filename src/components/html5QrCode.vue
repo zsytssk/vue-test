@@ -78,56 +78,65 @@ onMounted(() => {
 
 <template>
   <div class="box">
-    <div id="reader"></div>
-    <div class="text">{{ resultText ? resultText : '~' }}</div>
-    <div style="opacity: 0">
-      <input
-        ref="inputFile"
-        type="file"
-        accept="image/*"
-        style="pointer-events: none" />
-    </div>
-    <div class="card">
-      <button
-        type="button"
-        @click="startScanCamera">
-        startScanCamera
-      </button>
-      <button
-        type="button"
-        @click="startScanFile">
-        startScanFile
-      </button>
-      <button
-        type="button"
-        @click="stop">
-        stop
-      </button>
+    <div class="inner">
+      <div id="reader"></div>
+      <div class="text">{{ resultText ? resultText : '~' }}</div>
+      <div style="opacity: 0">
+        <input
+          ref="inputFile"
+          type="file"
+          accept="image/*"
+          style="pointer-events: none" />
+      </div>
+      <div class="card">
+        <button
+          type="button"
+          @click="startScanCamera">
+          startScanCamera
+        </button>
+        <button
+          type="button"
+          @click="startScanFile">
+          startScanFile
+        </button>
+        <button
+          type="button"
+          @click="stop">
+          stop
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="sass">
 .box {
-  margin: 0 auto;
-  width: 600px;
-}
-.allText {
-  width: 100%;
-  overflow: hidden;
-  word-break: break-all;
-}
-#reader {
-  background: #fff;
-  width: 600px;
-  height: 600px;
-}
-.card {
   display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-.text {
-  color: #fff;
+  align-items: center;
+  margin: 0;
+  background-color: #242424;
+  min-height: 100vh;
+  .inner {
+    margin: 0 auto;
+    width: 600px;
+    .allText {
+      width: 100%;
+      overflow: hidden;
+      word-break: break-all;
+    }
+    #reader {
+      background: #fff;
+      width: 600px;
+      height: 600px;
+    }
+    .card {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .text {
+      color: #fff;
+    }
+  }
 }
 </style>
