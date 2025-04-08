@@ -58,7 +58,6 @@ const startScanFile = async () => {
   }
 
   const [err2, str2] = await scanFile('reader', file as File)
-  console.log('test:>startScanFile:>2', { err2, str2 })
 
   if (err2) {
     console.error(str2)
