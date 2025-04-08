@@ -80,7 +80,7 @@ onMounted(() => {
   <div class="box">
     <div class="inner">
       <div id="reader"></div>
-      <div class="text">{{ resultText ? resultText : '~' }}</div>
+      <div class="allText">{{ resultText ? resultText : '~' }}</div>
       <div style="opacity: 0">
         <input
           ref="inputFile"
@@ -109,7 +109,7 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped lang="sass">
+<style scoped lang="scss">
 .box {
   display: flex;
   align-items: center;
@@ -122,6 +122,8 @@ onMounted(() => {
     .allText {
       width: 100%;
       overflow: hidden;
+      color: #fff;
+      text-align: center;
       word-break: break-all;
     }
     #reader {
@@ -133,9 +135,6 @@ onMounted(() => {
       display: flex;
       justify-content: center;
       gap: 10px;
-    }
-    .text {
-      color: #fff;
     }
   }
 }
