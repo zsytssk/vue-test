@@ -11,7 +11,7 @@ import {
 defineProps<{}>()
 defineOptions({ name: 'HTML5-Qrcode' })
 
-const resultRef = ref<HTMLDivElement>()
+const resultText = ref('')
 const inputFile = ref<HTMLVideoElement>()
 const startScanCamera = async () => {
   const [err, cameraId] = await getCameraId()
@@ -25,9 +25,7 @@ const startScanCamera = async () => {
     console.error(str2)
     return
   }
-  if (resultRef.value) {
-    resultRef.value.innerHTML = str2
-  }
+  resultText.value = str2
 }
 
 const uploadFile = () => {
@@ -66,13 +64,12 @@ const startScanFile = async () => {
     console.error(str2)
     return
   }
-  if (resultRef.value) {
-    resultRef.value.innerHTML = str2
-  }
+  resultText.value = str2
 }
 
 const stop = () => {
   stopScan()
+  resultText.value = ''
 }
 
 onMounted(() => {
@@ -81,33 +78,46 @@ onMounted(() => {
 </script>
 
 <template>
-  <div id="reader"></div>
-  <div ref="resultRef"></div>
-  <div style="opacity: 0">
-    <input
-      ref="inputFile"
-      type="file" />
-  </div>
-  <div class="card">
-    <button
-      type="button"
-      @click="startScanCamera">
-      startScanCamera
-    </button>
-    <button
-      type="button"
-      @click="startScanFile">
-      startScanCamera
-    </button>
-    <button
-      type="button"
-      @click="stop">
-      stop
-    </button>
+  <div class="box">
+    <div id="reader"></div>
+    <div class="text">{{ resultText ? resultText : '~' }}</div>
+    <div style="opacity: 0">
+      <input
+        ref="inputFile"
+        type="file"
+        accept="image/*"
+        style="pointer-events: none" />
+    </div>
+    <div class="card">
+      <button
+        type="button"
+        @click="startScanCamera">
+        startScanCamera
+      </button>
+      <button
+        type="button"
+        @click="startScanFile">
+        startScanFile
+      </button>
+      <button
+        type="button"
+        @click="stop">
+        stop
+      </button>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.box {
+  margin: 0 auto;
+  width: 600px;
+}
+.allText {
+  width: 100%;
+  overflow: hidden;
+  word-break: break-all;
+}
 #reader {
   background: #fff;
   width: 600px;
@@ -117,5 +127,8 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   gap: 10px;
+}
+.text {
+  color: #fff;
 }
 </style>

@@ -9,6 +9,7 @@ export default ({ command, mode }: ConfigEnv) => {
     server: {
       // https: true,
       host: '0.0.0.0',
+      allowedHosts: ['shad-credible-wahoo.ngrok-free.app'],
     },
     plugins: [env.VITE_POSITION === 'open' && WaPosition(), vue()],
   }

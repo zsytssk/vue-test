@@ -35,21 +35,9 @@ export function getCameras() {
 let html5QrCode: Html5Qrcode
 export async function scanCode(cameraId: string, elementId: string) {
   const config = {
-    fps: 30,
+    fps: 10,
     aspectRatio: 1,
-    qrbox: { width: 450, height: 450 },
-    videoConstraints: {
-      advanced: [
-        {
-          facingMode: 'environment',
-          focusMode: 'continuous',
-          frameRate: {
-            min: 30,
-            ideal: 60,
-          },
-        },
-      ],
-    },
+    qrbox: { width: 350, height: 350 },
   }
   html5QrCode = new Html5Qrcode(elementId, {
     verbose: false,
@@ -58,6 +46,7 @@ export async function scanCode(cameraId: string, elementId: string) {
   return new Promise<[boolean, string, any?]>((resolve) => {
     html5QrCode
       .start(
+        // { facingMode: { exact: 'environment' } },
         cameraId,
         config,
         (decodedText, decodedResult) => {
@@ -71,53 +60,6 @@ export async function scanCode(cameraId: string, elementId: string) {
         resolve([true, err.message])
       })
   })
-}
-export async function scanCodeAutoFocus(elementId: string) {
-  const config = {
-    fps: 10,
-    aspectRatio: 1,
-    qrbox: { width: 350, height: 350 },
-  }
-  const constraints = {
-    video: {
-      facingMode: 'environment',
-      focusMode: 'manual',
-      advanced: [{ focusMode: 'continuous' }],
-    },
-  }
-
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia(constraints as any)
-
-    const videoTrack = stream.getVideoTracks()[0]
-    const capabilities = videoTrack.getCapabilities() as any
-    if (capabilities.focusMode) {
-      alert('支持自动对焦：' + capabilities.focusMode)
-    }
-
-    // 获取 video 标签或临时 DOM
-    const videoElement = document.createElement('video')
-    videoElement.setAttribute('playsinline', true)
-    document.getElementById(elementId)?.appendChild(videoElement)
-
-    videoElement.srcObject = stream
-    await videoElement.play()
-
-    const qrScanner = new Html5Qrcode(/* elementId */ videoElement)
-
-    await qrScanner.start(
-      { videoTrack }, // 使用已有的 videoTrack（绕开默认摄像头选择）
-      config,
-      (decodedText, decodedResult) => {
-        console.log('扫码成功:', decodedText)
-      },
-      (errorMessage) => {
-        console.warn('扫码失败:', errorMessage)
-      },
-    )
-  } catch (err) {
-    console.error('摄像头访问失败', err)
-  }
 }
 
 export function scanFile(elementId: string, imageFile: File) {
