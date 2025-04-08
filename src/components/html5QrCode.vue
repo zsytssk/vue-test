@@ -127,6 +127,7 @@ onMounted(() => {
       word-break: break-all;
     }
     #reader {
+      margin: 0 auto;
       background: #fff;
       width: 600px;
       height: 600px;

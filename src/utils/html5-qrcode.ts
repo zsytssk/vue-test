@@ -32,7 +32,7 @@ export function getCameras() {
     })
 }
 
-let html5QrCode: Html5Qrcode
+let html5QrCode: Html5Qrcode | undefined
 export async function scanCode(cameraId: string, elementId: string) {
   const config = {
     fps: 30,
@@ -58,7 +58,7 @@ export async function scanCode(cameraId: string, elementId: string) {
 
   return new Promise<[boolean, string, any?]>((resolve) => {
     html5QrCode
-      .start(
+      ?.start(
         cameraId,
         config,
         (decodedText, decodedResult) => {
@@ -87,8 +87,11 @@ export function scanFile(elementId: string, imageFile: File) {
 }
 
 export async function stopScan() {
-  if (html5QrCode) {
+  if (html5QrCode?.isScanning) {
     await html5QrCode.stop()
-    return html5QrCode.clear()
+    html5QrCode.clear()
+  }
+  if (html5QrCode) {
+    html5QrCode = undefined
   }
 }
