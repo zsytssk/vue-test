@@ -8,10 +8,15 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ElButton: typeof import('element-plus/es')['ElButton']
+    ElDialog: typeof import('element-plus/es')['ElDialog']
     ElOption: typeof import('element-plus/es')['ElOption']
     ElSelect: typeof import('element-plus/es')['ElSelect']
+    ElTag: typeof import('element-plus/es')['ElTag']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     Html5QrCode: typeof import('./src/components/html5QrCode.vue')['default']
+    Html5QrCode2: typeof import('./src/components/html5QrCode2/index.vue')['default']
+    InputWidgetScan: typeof import('./src/components/html5QrCode2/input-widget-scan.vue')['default']
     RxingWasm: typeof import('./src/components/rxing-wasm.vue')['default']
   }
 }

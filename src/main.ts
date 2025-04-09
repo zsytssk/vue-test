@@ -5,6 +5,4 @@ import App from './App.vue'
 
 import './style.css'
 
-// import 'element-plus/dist/index.css'
-
 createApp(App).use(ElementPlus).mount('#app')

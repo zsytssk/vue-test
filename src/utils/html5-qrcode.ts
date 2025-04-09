@@ -76,10 +76,20 @@ export async function scanCode(
   onReadSuc: (text: string, result: Html5QrcodeResult) => void,
   onReadErr?: (msg: string) => void,
 ) {
+  const ele = document.getElementById(elementId)
+  if (!ele) {
+    return [true, `$can't find element id=${elementId}`] as const
+  }
+  const bounds = ele.getBoundingClientRect()
+  const width = Math.floor(bounds.width * 0.8)
+  const height = Math.floor(bounds.height * 0.8)
+  const size = Math.min(width, height)
+
   const config = {
     fps: 25,
     aspectRatio: 1,
-    qrbox: { width: 280, height: 280 },
+    qrbox: { width: size, height: size },
+    disableFlip: true,
   } as Html5QrcodeCameraScanConfig
 
   html5QrCode = new Html5Qrcode(elementId, {
