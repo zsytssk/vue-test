@@ -103,6 +103,8 @@ export async function scanCode(
         cameraId,
         config,
         (decodedText, decodedResult) => {
+          html5QrCode?.pause()
+          ele.querySelector('video')?.pause()
           onReadSuc(decodedText, decodedResult)
         },
         (errMsg) => {
@@ -145,4 +147,23 @@ export async function stopScan() {
   if (html5QrCode) {
     html5QrCode = undefined
   }
+}
+
+export function getVideoImgData(ele?: HTMLDivElement) {
+  const video = ele?.querySelector('video')
+  if (!video) {
+    return
+  }
+  // 创建一个 canvas 元素
+  const canvas = document.createElement('canvas')
+  canvas.width = video.videoWidth
+  canvas.height = video.videoHeight
+
+  // 获取 canvas 的 2D 上下文
+  const ctx = canvas.getContext('2d')
+
+  // 将视频的当前帧绘制到 canvas 上
+  ctx?.drawImage(video, 0, 0, canvas.width, canvas.height)
+
+  return canvas
 }

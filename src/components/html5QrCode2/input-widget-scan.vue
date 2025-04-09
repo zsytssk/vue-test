@@ -60,9 +60,22 @@
     :show-close="false">
     <div
       id="qrReader"
+      ref="qrReader"
       class="videoBox"></div>
     <template #footer>
       <div class="dialog-footer">
+        <div class="select-box">
+          <div class="select-label">切换相机：</div>
+          <el-select
+            v-model="selectCamera"
+            :popper-class="$style['el-select-dropdown']">
+            <el-option
+              v-for="(item, index) in cameraList"
+              :key="index"
+              :value="item.id"
+              :label="item.label" />
+          </el-select>
+        </div>
         <div class="textBox">
           <el-tag
             size="small"
@@ -70,20 +83,10 @@
             >识别文字：{{ scanText ? scanText : '空' }}</el-tag
           >
         </div>
+
         <div class="btnBox">
-          <div class="select-box">
-            <div class="select-label">切换相机：</div>
-            <el-select
-              v-model="selectCamera"
-              :popper-class="$style['el-select-dropdown']">
-              <el-option
-                v-for="(item, index) in cameraList"
-                :key="index"
-                :value="item.id"
-                :label="item.label" />
-            </el-select>
-          </div>
           <el-button @click="closeScanCamera"> 取消 </el-button>
+          <el-button @click="resetScanCamera"> 重置 </el-button>
           <el-button
             type="primary"
             :disabled="!scanText"
@@ -105,6 +108,7 @@ import {
   type ExtraInputWay,
   getCameraId,
   getCameras,
+  getVideoImgData,
   scanCode,
   scanFile,
   stopScan,
@@ -140,34 +144,6 @@ const closeDialog = (val?: string) => {
   closeResolve.value?.(val)
   dialogVisible.value = false
   closeResolve.value = undefined
-}
-
-const closeScanCamera = () => {
-  scanVisible.value = false
-}
-const confirmScanCamera = () => {
-  resultText.value = scanText.value
-  scanVisible.value = false
-}
-const openScanCamera = () => {
-  scanVisible.value = true
-}
-
-const startScanCamera = async () => {
-  await clearTop()
-  if (!selectCamera.value) {
-    return
-  }
-  const [err2, str2] = await scanCode(
-    inputType.value as ExtraInputWay,
-    selectCamera.value,
-    'qrReader',
-    (text) => (scanText.value = text),
-  )
-  if (err2) {
-    ElMessage.error(str2)
-    return
-  }
 }
 
 const uploadFile = () => {
@@ -227,6 +203,50 @@ const clearScan = async () => {
   scanText.value = ''
   if (qrReader.value) {
     qrReader.value.innerHTML = ''
+  }
+}
+
+const closeScanCamera = () => {
+  scanVisible.value = false
+}
+const confirmScanCamera = () => {
+  const canvas = getVideoImgData(qrReader.value)
+  console.log(`test:.canvas`, qrReader.value, canvas)
+  if (scanFileBox.value && canvas) {
+    canvas.style = 'width: 100%; height:100%'
+    scanFileBox.value.innerHTML = ''
+    scanFileBox.value?.appendChild(canvas)
+  }
+
+  resultText.value = scanText.value
+  scanVisible.value = false
+}
+const resetScanCamera = async () => {
+  scanText.value = ''
+  await stopScan()
+  startScanCamera()
+}
+const openScanCamera = () => {
+  scanVisible.value = true
+}
+
+const startScanCamera = async () => {
+  await clearTop()
+  if (!selectCamera.value) {
+    return
+  }
+  const [err2, str2] = await scanCode(
+    inputType.value as ExtraInputWay,
+    selectCamera.value,
+    'qrReader',
+    (text, _result) => {
+      ElMessage.success(`识别文字：${text}`)
+      scanText.value = text
+    },
+  )
+  if (err2) {
+    ElMessage.error(str2)
+    return
   }
 }
 
@@ -381,25 +401,15 @@ watch(
         white-space: normal;
         word-break: break-all;
       }
-      .btnBox {
+      .select-box {
         display: flex;
-        justify-content: end;
+        flex: 1;
         align-items: center;
-        gap: 20px;
-        .select-box {
-          display: flex;
-          flex: 1;
-          align-items: center;
-          gap: 10;
-          .select-label {
-            color: #666;
-            font-size: 24px;
-            white-space: nowrap;
-          }
-        }
-        .el-button {
-          height: 60px;
+        gap: 10;
+        .select-label {
+          color: #666;
           font-size: 24px;
+          white-space: nowrap;
         }
         .el-select {
           .el-tooltip__trigger {
@@ -408,6 +418,19 @@ watch(
           .el-select__wrapper {
             font-size: 24px;
           }
+        }
+      }
+      .btnBox {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+
+        .el-button {
+          flex: 1;
+          padding: 0 20px;
+          height: 60px;
+          font-size: 24px;
         }
       }
       .el-button + .el-button {

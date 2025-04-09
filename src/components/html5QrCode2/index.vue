@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 import InputWidgetScan from './input-widget-scan.vue'
 
@@ -9,6 +9,10 @@ const scanRef = ref<InstanceType<typeof InputWidgetScan>>()
 function openDialog() {
   scanRef.value?.openDialog('1')
 }
+
+onMounted(() => {
+  openDialog()
+})
 </script>
 
 <template>
