@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import HelloWorld from './components/html5QrCode.vue'
+// import RxingWasm from './components/rxing-wasm.vue'
+import HTML5Qrcode from './components/html5QrCode.vue'
 </script>
 
 <template>
-  <HelloWorld />
+  <!-- <RxingWasm /> -->
+  <HTML5Qrcode />
 </template>
 
 <style scoped>

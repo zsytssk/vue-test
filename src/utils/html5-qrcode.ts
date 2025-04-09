@@ -1,4 +1,53 @@
-import { Html5Qrcode } from 'html5-qrcode'
+import {
+  Html5Qrcode,
+  type Html5QrcodeCameraScanConfig,
+  type Html5QrcodeResult,
+  Html5QrcodeSupportedFormats,
+} from 'html5-qrcode'
+
+/** 类型：1=全部， 2=二维码， 3=条形码 */
+export type ExtraInputWay = '1' | '2' | '3'
+/** https://github.com/mebjas/html5-qrcode?tab=readme-ov-file#supported-code-formats */
+function getSupportType(type: ExtraInputWay) {
+  if (type === '1') {
+    return undefined
+  }
+  if (type === '2') {
+    return [
+      Html5QrcodeSupportedFormats.QR_CODE,
+      Html5QrcodeSupportedFormats.AZTEC,
+      Html5QrcodeSupportedFormats.DATA_MATRIX,
+      Html5QrcodeSupportedFormats.MAXICODE,
+      Html5QrcodeSupportedFormats.PDF_417,
+    ]
+  }
+  return [
+    Html5QrcodeSupportedFormats.CODE_39,
+    Html5QrcodeSupportedFormats.CODE_93,
+    Html5QrcodeSupportedFormats.CODE_128,
+    Html5QrcodeSupportedFormats.ITF,
+    Html5QrcodeSupportedFormats.EAN_13,
+    Html5QrcodeSupportedFormats.EAN_8,
+    Html5QrcodeSupportedFormats.UPC_A,
+    Html5QrcodeSupportedFormats.UPC_E,
+    Html5QrcodeSupportedFormats.RSS_14,
+    Html5QrcodeSupportedFormats.RSS_EXPANDED,
+  ]
+}
+
+export function getCameras() {
+  return Html5Qrcode.getCameras()
+    .then((devices) => {
+      if (!devices?.length) {
+        return [true, '没有找到相机'] as const
+      }
+      return [false, devices] as const
+    })
+    .catch((err) => {
+      const msg = err.message ? err.message : err
+      return [true, msg] as const
+    })
+}
 
 export function getCameraId() {
   return Html5Qrcode.getCameras()
@@ -18,42 +67,24 @@ export function getCameraId() {
       return [true, msg] as const
     })
 }
-export function getCameras() {
-  return Html5Qrcode.getCameras()
-    .then((devices) => {
-      if (!devices?.length) {
-        return [true, '没有找到相机'] as const
-      }
-      return [false, devices] as const
-    })
-    .catch((err) => {
-      const msg = err.message ? err.message : err
-      return [true, msg] as const
-    })
-}
 
 let html5QrCode: Html5Qrcode | undefined
-export async function scanCode(cameraId: string, elementId: string) {
+export async function scanCode(
+  type: ExtraInputWay,
+  cameraId: string,
+  elementId: string,
+  onReadSuc: (text: string, result: Html5QrcodeResult) => void,
+  onReadErr?: (msg: string) => void,
+) {
   const config = {
-    fps: 30,
+    fps: 25,
     aspectRatio: 1,
-    qrbox: { width: 450, height: 450 },
-    videoConstraints: {
-      advanced: [
-        {
-          facingMode: 'environment',
-          focusMode: 'continuous',
-          zoom: 1.8,
-          frameRate: {
-            min: 30,
-            ideal: 60,
-          },
-        },
-      ],
-    },
-  }
+    qrbox: { width: 280, height: 280 },
+  } as Html5QrcodeCameraScanConfig
+
   html5QrCode = new Html5Qrcode(elementId, {
     verbose: false,
+    formatsToSupport: getSupportType(type),
   })
 
   return new Promise<[boolean, string, any?]>((resolve) => {
@@ -62,27 +93,37 @@ export async function scanCode(cameraId: string, elementId: string) {
         cameraId,
         config,
         (decodedText, decodedResult) => {
-          resolve([false, decodedText, decodedResult])
+          onReadSuc(decodedText, decodedResult)
         },
-        (_errMsg) => {
-          //   resolve([true, errorMessage])
+        (errMsg) => {
+          onReadErr?.(errMsg)
         },
       )
       .catch((err) => {
-        resolve([true, err.message])
+        const msg = err.message ? err.message : err
+
+        resolve([true, msg])
       })
   })
 }
 
-export function scanFile(elementId: string, imageFile: File) {
-  html5QrCode = new Html5Qrcode(elementId)
+export function scanFile(
+  type: ExtraInputWay,
+  elementId: string,
+  imageFile: File,
+) {
+  html5QrCode = new Html5Qrcode(elementId, {
+    formatsToSupport: getSupportType(type),
+    verbose: false,
+  })
   return html5QrCode
     .scanFile(imageFile, true)
     .then((decodedText) => {
       return [false, decodedText]
     })
     .catch((err) => {
-      return [true, err]
+      const msg = err.message ? err.message : err
+      return [true, msg]
     })
 }
 

@@ -1,42 +1,12 @@
 <script setup lang="ts">
-import { ElMessage } from 'element-plus'
-import type { CameraDevice } from 'html5-qrcode'
-import { onMounted, ref, watch } from 'vue'
-
-import {
-  getCameraId,
-  getCameras,
-  scanCode,
-  scanFile,
-  stopScan,
-} from '../utils/html5-qrcode'
+import { convert_js_image_to_luma, decode_barcode } from 'rxing-wasm'
+import { ref } from 'vue'
 
 defineProps<{}>()
-defineOptions({ name: 'HTML5-Qrcode' })
+defineOptions({ name: 'rxing-wasm' })
 
-const selectCamera = ref<string>()
-const cameraList = ref<CameraDevice[]>([])
 const resultText = ref('')
 const inputFile = ref<HTMLInputElement>()
-const startScanCamera = async () => {
-  if (!selectCamera.value) {
-    ElMessage.error('请选择摄像头')
-    return
-  }
-  await stopScan()
-  const [err2, str2] = await scanCode(
-    '1',
-    selectCamera.value,
-    'reader',
-    (text) => {
-      resultText.value = text
-    },
-  )
-  if (err2) {
-    console.error(str2)
-    return
-  }
-}
 
 const uploadFile = (inputEle?: HTMLInputElement) => {
   return new Promise<[boolean, string | File]>((resolve) => {
@@ -59,56 +29,75 @@ const uploadFile = (inputEle?: HTMLInputElement) => {
   })
 }
 
-const startScanFile = async () => {
-  await stopScan()
+function decodeBarcode(canvas: HTMLCanvasElement) {
+  let context = canvas.getContext('2d')
+  let height = canvas.height
+  let width = canvas.width
+  let imageData = context?.getImageData(0, 0, width, height)
 
+  let data = imageData?.data
+  let luma8Data = convert_js_image_to_luma(data as any)
+  let parsedBarcode = decode_barcode(luma8Data, width, height)
+
+  console.log(`test:>`, parsedBarcode)
+  return parsedBarcode
+}
+
+const startScanFile = async () => {
   const [err, file] = await uploadFile(inputFile.value)
   if (err) {
     console.error(file)
     return
   }
 
-  const [err2, str2] = await scanFile('1', 'reader', file as File)
+  const reader = new FileReader()
 
-  if (err2) {
-    console.error(str2)
-    return
+  reader.onload = function (e) {
+    const img = new Image()
+
+    // 当图片加载完成时，将其绘制到 canvas 上
+    img.onload = function () {
+      const canvas = document.getElementById('myCanvas') as HTMLCanvasElement
+      const ctx = canvas.getContext('2d')
+
+      // 清空画布，防止每次上传新图像时覆盖上一个图像
+      ctx?.clearRect(0, 0, canvas.width, canvas.height)
+
+      // 绘制上传的图片
+      ctx?.drawImage(img, 0, 0, canvas.width, canvas.height) // 可以调整宽高，适应 canvas
+      decodeBarcode(canvas)
+    }
+
+    // 设置图片的源为上传的文件
+    img.src = e.target?.result as string
   }
-  resultText.value = str2
+
+  // 读取文件内容为 DataURL
+  reader.readAsDataURL(file as File)
+
+  // const [err2, str2] = await scanFile('reader', file as File)
+
+  // if (err2) {
+  //   console.error(str2)
+  //   return
+  // }
+  // resultText.value = str2
 }
 
-watch(
-  () => selectCamera.value,
-  () => {
-    startScanCamera()
-  },
-)
-const stop = async () => {
-  await stopScan()
+const stop = () => {
   resultText.value = ''
 }
-
-onMounted(() => {
-  stopScan()
-  getCameras().then(([err, list]) => {
-    if (err) {
-      return
-    }
-    cameraList.value = list as CameraDevice[]
-  })
-  getCameraId().then(([err, cameraId]) => {
-    if (err) {
-      return
-    }
-    selectCamera.value = cameraId
-  })
-})
 </script>
 
 <template>
   <div class="box">
     <div class="inner">
-      <div id="reader"></div>
+      <div id="reader">
+        <canvas
+          id="myCanvas"
+          width="600"
+          height="600"></canvas>
+      </div>
       <div class="allText">{{ resultText ? resultText : '~' }}</div>
       <div style="opacity: 0">
         <input
@@ -117,21 +106,7 @@ onMounted(() => {
           accept="image/*"
           style="pointer-events: none" />
       </div>
-      <div>
-        <el-select v-model="selectCamera">
-          <el-option
-            v-for="(item, index) in cameraList"
-            :value="item.id"
-            :label="item.label"
-            :key="index" />
-        </el-select>
-      </div>
       <div class="card">
-        <button
-          type="button"
-          @click="startScanCamera">
-          startScanCamera
-        </button>
         <button
           type="button"
           @click="startScanFile">
@@ -156,7 +131,7 @@ onMounted(() => {
   min-height: 100vh;
   .inner {
     margin: 0 auto;
-    width: 300px;
+    width: 600px;
     .allText {
       width: 100%;
       overflow: hidden;
@@ -167,8 +142,8 @@ onMounted(() => {
     #reader {
       margin: 0 auto;
       background: #fff;
-      width: 300px;
-      height: 300px;
+      width: 600px;
+      height: 600px;
       overflow: hidden;
     }
     .card {
