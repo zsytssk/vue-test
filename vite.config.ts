@@ -6,6 +6,7 @@ import Components from 'unplugin-vue-components/vite'
 import { ConfigEnv, loadEnv } from 'vite'
 
 import WaPosition from './script/waPosition'
+import WaPositionServer from './script/waPositionServer'
 
 export default ({ mode }: ConfigEnv) => {
   const env = loadEnv(mode, process.cwd())
@@ -22,6 +23,7 @@ export default ({ mode }: ConfigEnv) => {
       },
     },
     plugins: [
+      env.VITE_POSITION === 'open' && WaPositionServer(),
       env.VITE_POSITION === 'open' && WaPosition(),
       vue(),
       AutoImport({

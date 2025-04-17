@@ -11,12 +11,16 @@ declare module 'vue' {
     ElButton: typeof import('element-plus/es')['ElButton']
     ElDialog: typeof import('element-plus/es')['ElDialog']
     ElOption: typeof import('element-plus/es')['ElOption']
+    ElPagination: typeof import('element-plus/es')['ElPagination']
     ElSelect: typeof import('element-plus/es')['ElSelect']
+    ElTable: typeof import('element-plus/es')['ElTable']
+    ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
     ElTag: typeof import('element-plus/es')['ElTag']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     Html5QrCode: typeof import('./src/components/html5QrCode.vue')['default']
     Html5QrCode2: typeof import('./src/components/html5QrCode2/index.vue')['default']
     InputWidgetScan: typeof import('./src/components/html5QrCode2/input-widget-scan.vue')['default']
     RxingWasm: typeof import('./src/components/rxing-wasm.vue')['default']
+    ZTable: typeof import('./src/components/zTable/index.vue')['default']
   }
 }
