@@ -1,10 +1,25 @@
 <script setup lang="ts">
-import ZTable from '../components/zTable/index.vue'
+import { onMounted, ref } from 'vue'
+
+import ZTable, { type PageInfo } from '../components/zTable/index.vue'
+
+const tableRef = ref<InstanceType<typeof ZTable>>()
+
+const requestFn = async (pageInfo: PageInfo) => {
+  console.log(`test:>requestFn`, pageInfo)
+  return { data: [{ code: 1, name: '111', leaderName: 'sdfsdf' }], ...pageInfo }
+}
+
+onMounted(() => {
+  tableRef.value?.refresh()
+})
 </script>
 
 <template>
   <div :class="$style.tableBox">
-    <ZTable :table-props="{ class: 'test-table' }">
+    <ZTable
+      :request-fn="requestFn"
+      ref="tableRef">
       <el-table-column
         align="center"
         label="小组编号"
