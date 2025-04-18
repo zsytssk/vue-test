@@ -28,7 +28,7 @@ import { ref } from 'vue'
 defineOptions({
   name: 'ZTable',
 })
-defineExpose({ refresh: getTableData })
+defineExpose({ run: getTableData, reload: getTableData, reset })
 
 const props = defineProps<{
   boxClass?: string
@@ -58,6 +58,15 @@ async function getTableData() {
     total: res.total,
     page: res.page,
     pageSize: res.pageSize,
+  }
+}
+
+// 查询
+async function reset() {
+  pageInfo.value = {
+    total: 0,
+    page: 1,
+    pageSize: 10,
   }
 }
 

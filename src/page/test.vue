@@ -11,7 +11,7 @@ const requestFn = async (pageInfo: PageInfo) => {
 }
 
 onMounted(() => {
-  tableRef.value?.refresh()
+  tableRef.value?.run()
 })
 </script>
 
@@ -39,7 +39,7 @@ onMounted(() => {
       <el-table-column
         align="center"
         label="创建时间"
-        prop="CreatedAt"></el-table-column>
+        prop="CreatedAt" />
     </ZTable>
   </div>
 </template>
