@@ -1,9 +1,11 @@
 <template>
   <div :class="[$style.zTable, boxClass]">
     <el-table
+      v-loading="loading"
+      show-overflow-tooltip
+      tooltip-effect="dark"
       v-bind="tableProps"
-      :data="tableData"
-      tooltip-effect="dark">
+      :data="tableData">
       <slot></slot>
     </el-table>
     <div class="pagination-box">
@@ -52,20 +54,26 @@ export type PageInfo = {
 
 const pageInfo = ref<PageInfo>({ page: 1, pageSize: 10, total: 0 })
 const tableData = ref<any[]>([])
+const loading = ref(false)
 // 查询
 async function getTableData() {
-  const res = await props.requestFn(pageInfo.value)
+  loading.value = true
+  try {
+    const res = await props.requestFn(pageInfo.value)
 
-  if (!res) {
-    tableData.value = []
-    pageInfo.value.total = 0
-    return
-  }
-  tableData.value = res.data
-  pageInfo.value = {
-    total: res.total,
-    page: res.page,
-    pageSize: res.pageSize,
+    if (!res) {
+      tableData.value = []
+      pageInfo.value.total = 0
+      return
+    }
+    tableData.value = res.data
+    pageInfo.value = {
+      total: res.total,
+      page: res.page,
+      pageSize: res.pageSize,
+    }
+  } finally {
+    loading.value = false
   }
 }
 
