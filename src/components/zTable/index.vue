@@ -4,11 +4,25 @@
       v-loading="loading"
       show-overflow-tooltip
       tooltip-effect="dark"
+      :row-key="rowKey || 'ID'"
       v-bind="tableProps"
-      :data="tableData">
+      :data="tableData"
+      @selection-change="
+        (selection: any[]) => emit('selection-change', selection)
+      ">
+      <template #empty>
+        <div class="custom-empty">
+          <el-empty
+            description="暂无数据"
+            :image-size="150" />
+        </div>
+      </template>
       <slot></slot>
     </el-table>
-    <div class="pagination-box">
+
+    <div
+      v-if="showPagination"
+      class="pagination-box">
       <el-pagination
         class="el-pagination-test"
         layout="total, sizes, prev, pager, next, jumper"
@@ -25,13 +39,20 @@
 
 <script setup lang="ts">
 import type { PaginationProps, TableProps } from 'element-plus'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 defineOptions({
   name: 'ZTable',
 })
 
+const emit = defineEmits<{
+  (e: 'selection-change', selection: any[]): void
+}>()
+
 const props = defineProps<{
+  /** 显示分页total>pageSize */
+  showPaginationOnlyNeed?: boolean
+  rowKey?: string
   boxClass?: string
   tableProps?: Partial<TableProps<any>>
   paginationProps?: Partial<PaginationProps>
@@ -55,6 +76,17 @@ export type PageInfo = {
 const pageInfo = ref<PageInfo>({ page: 1, pageSize: 10, total: 0 })
 const tableData = ref<any[]>([])
 const loading = ref(false)
+
+const showPagination = computed(() => {
+  if (props.showPaginationOnlyNeed === false) {
+    return true
+  }
+  if (pageInfo.value.total > pageInfo.value.pageSize) {
+    return true
+  }
+  return false
+})
+
 // 查询
 async function getTableData() {
   loading.value = true
@@ -77,7 +109,7 @@ async function getTableData() {
   }
 }
 
-// 查询
+/** 重置分页信息并请求数据 */
 async function reset() {
   pageInfo.value = {
     total: 0,
@@ -99,11 +131,26 @@ const handleCurrentChange = (val: number) => {
   getTableData()
 }
 
+/** 通过pageInfo获取自增的序号 */
+const getNoByPageInfo = (originIndex: number) => {
+  return (pageInfo.value.page - 1) * pageInfo.value.pageSize + originIndex
+}
+
+/** 把当前页全部删除了，需要切换当前页面  */
+const onDelete = (itemNum: number) => {
+  if (tableData.value.length === itemNum && pageInfo.value.page > 1) {
+    pageInfo.value.page--
+  }
+}
+
 defineExpose({
   run: getTableData,
   reload: getTableData,
   reset,
-  pageInfo: pageInfo,
+  tableData,
+  pageInfo,
+  onDelete,
+  getNoByPageInfo,
 })
 </script>
 

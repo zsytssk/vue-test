@@ -1,11 +1,12 @@
-const child_process = require('child_process')
+import child_process from 'child_process'
+import os from 'os'
 
 export default function WaPositionServer() {
   return {
     name: 'wa-position-server',
     apply: 'serve',
-    configureServer(server) {
-      server.middlewares.use((req, _, next) => {
+    configureServer(server: any) {
+      server.middlewares.use((req: any, _: any, next: any) => {
         if (req._parsedUrl.pathname === '/waPositionCode') {
           const path =
             req._parsedUrl.query && req._parsedUrl.query.split('=')[1]
@@ -14,7 +15,7 @@ export default function WaPositionServer() {
               const lastColonIndex = path.lastIndexOf(':')
               const linePath = path.substring(lastColonIndex + 1)
               const filePath = path.substring(0, lastColonIndex)
-              const platform = os()
+              const platform = os.platform()
               if (platform === 'win32') {
                 child_process.exec(
                   `webstorm64.exe  --line ${linePath} ${filePath}`,
@@ -31,11 +32,4 @@ export default function WaPositionServer() {
       })
     },
   }
-}
-
-function os() {
-  'use strict'
-  const os = require('os')
-  const platform = os.platform()
-  return platform
 }
