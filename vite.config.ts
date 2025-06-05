@@ -13,9 +13,19 @@ export default ({ mode }: ConfigEnv) => {
   return {
     base: './',
     server: {
-      // https: true,
-      host: '0.0.0.0',
-      allowedHosts: ['shad-credible-wahoo.ngrok-free.app'],
+      // 如果使用docker-compose开发模式，设置为false
+      open: false,
+      port: env.VITE_CLI_PORT,
+      proxy: {
+        // 把key的路径代理到target位置
+        [env.VITE_BASE_API]: {
+          // 需要代理的路径   例如 '/api'
+          target: `${env.VITE_BASE_PATH}:${env.VITE_SERVER_PORT}/`, // 代理到 目标路径
+          changeOrigin: false,
+          rewrite: (path: any) =>
+            path.replace(new RegExp('^' + env.VITE_BASE_API), ''),
+        },
+      },
     },
     resolve: {
       alias: {
