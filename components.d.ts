@@ -22,6 +22,7 @@ declare module 'vue' {
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
+    ElTree: typeof import('element-plus/es')['ElTree']
     ElTreeV2: typeof import('element-plus/es')['ElTreeV2']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     Html5QrCode: typeof import('./src/components/html5QrCode.vue')['default']

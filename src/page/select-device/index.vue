@@ -17,14 +17,17 @@
           />
         </div>
         <div class="elc-panel-main">
-          <el-tree-v2
+          <el-tree
+            default-expand-all
             highlight-current
+            :expand-on-click-node="false"
+            :current-node-key="currentCategory?.ID"
             ref="treeCategoryRef"
             :data="categoryList"
             :props="categoryProps"
             :height="339"
             @current-change="onCurCategoryChange"
-            :filter-method="filterMethod"
+            :filterNodeMethod="filterMethod"
           >
             <template #default="{ data, node }">
               <show-tooltip
@@ -40,7 +43,7 @@
             <template #empty>
               <el-empty description="暂无数据" />
             </template>
-          </el-tree-v2>
+          </el-tree>
         </div>
       </div>
       <div class="elc-panel">
@@ -53,14 +56,17 @@
           />
         </div>
         <div class="elc-panel-main">
-          <el-tree-v2
+          <el-tree
             ref="treeDeviceRef"
             highlight-current
+            default-expand-all
+            :current-node-key="currentDevice?.ID"
+            :expand-on-click-node="false"
             :data="deviceList"
             :props="deviceProps"
             :height="339"
             @current-change="onCurDeviceChange"
-            :filter-method="filterMethod"
+            :filterNodeMethod="filterMethod"
           >
             <template #default="{ data, node }">
               <show-tooltip :content="node.label" width="100%" />
@@ -73,7 +79,7 @@
             <template #empty>
               <el-empty description="暂无数据" />
             </template>
-          </el-tree-v2>
+          </el-tree>
         </div>
       </div>
     </div>
@@ -152,6 +158,7 @@ const onCurDeviceChange = (
   //   radios.value = row.id
 }
 const onClearDevice = () => {
+  currentCategory.value = undefined
   currentDevice.value = undefined
 }
 
@@ -212,6 +219,7 @@ const filterMethod = (query: string, _data: any, node: Node<any>) => {
       .elc-panel {
         display: flex;
         flex: 1;
+        overflow: hidden;
         flex-direction: column;
         border: 1px solid rgba(0, 0, 34, 0.08);
         height: 100%;
@@ -221,10 +229,44 @@ const filterMethod = (query: string, _data: any, node: Node<any>) => {
         .elc-search-box {
           border-bottom: 1px solid rgba(0, 0, 34, 0.08);
           padding: 10px;
-          height: 40px;
+          height: 60px;
+          box-sizing: border-box;
         }
         .elc-icon-box {
           margin-right: 8px;
+        }
+        .elc-panel-main {
+          overflow: auto;
+          scrollbar-color: auto;
+          scrollbar-width: unset;
+          &:hover {
+            &::-webkit-scrollbar-thumb {
+              background: rgba(0, 0, 0, 0.3);
+            }
+
+            &::-webkit-scrollbar-thumb:hover {
+              background: rgba(0, 0, 0, 0.5);
+            }
+          }
+          &::-webkit-scrollbar {
+            width: 6px;
+          }
+
+          /* Track */
+          &::-webkit-scrollbar-track {
+            background: transparent;
+          }
+
+          /* Handle */
+          &::-webkit-scrollbar-thumb {
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0);
+          }
+
+          /* Handle on hover */
+          &::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0);
+          }
         }
       }
     }
