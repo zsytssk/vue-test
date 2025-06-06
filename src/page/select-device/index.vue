@@ -1,4 +1,11 @@
 <template>
+  <el-select
+    v-model="inputValue"
+    placeholder="请选择设备"
+    @click="onFocus"
+    style="width: 240px"
+  />
+
   <el-dialog
     v-model="dialogVisible"
     title="选择设备"
@@ -20,6 +27,7 @@
           <el-tree
             default-expand-all
             highlight-current
+            node-key="ID"
             :expand-on-click-node="false"
             :current-node-key="currentCategory?.ID"
             ref="treeCategoryRef"
@@ -57,9 +65,10 @@
         </div>
         <div class="elc-panel-main">
           <el-tree
-            ref="treeDeviceRef"
             highlight-current
             default-expand-all
+            ref="treeDeviceRef"
+            node-key="ID"
             :current-node-key="currentDevice?.ID"
             :expand-on-click-node="false"
             :data="deviceList"
@@ -90,7 +99,7 @@
             <show-tooltip :content="currentDevice.deviceName" width="100%" />
           </el-tag>
           <el-tooltip v-if="currentDevice" content="删除" placement="top">
-            <el-button link icon="Close" @click="onClearDevice" />
+            <el-button link icon="Close" @click="onResetDialog" />
           </el-tooltip>
         </div>
         <div>
@@ -104,7 +113,7 @@
 
 <script setup lang="ts">
 import type { ElTreeV2 } from 'element-plus'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 import ShowTooltip from '@/components/show-tooltip/show-tooltip.vue'
 import { useOpenDialog } from '@/components/useOpenDialog'
@@ -120,33 +129,46 @@ const { data: categoryList } = useRequest(() =>
     data: res.data.list,
   })),
 )
-const { data: deviceList, run } = useRequest((categoryId: number) =>
-  request({
-    url: '/device/getDeviceList',
-    method: 'get',
-    params: {
-      categoryId,
-    },
-  }).then((res: any) => ({
-    ...res,
-    data: res.data.list,
-  })),
+
+const { data: deviceList, run: getDeviceList } = useRequest(
+  (categoryId?: number) =>
+    request({
+      url: '/device/getDeviceList',
+      method: 'get',
+      params: {
+        categoryId,
+      },
+    }).then((res: any) => ({
+      ...res,
+      data: res.data.list,
+    })),
 )
 
-const { dialogVisible, closeDialog, openDialog } = useOpenDialog(true)
+const inputValue = ref('')
+const inputRef = ref()
+
+const { dialogVisible, closeDialog, openDialog } = useOpenDialog(false)
+
+const onFocus = () => {
+  inputRef.value?.blur()
+  openDialog()
+}
 
 const localClosePlanDialog = () => {
+  currentCategory.value = undefined
+  currentDevice.value = undefined
   closeDialog()
 }
 const onConfirm = () => {
-  console.log('点击了确定')
+  inputValue.value = currentDevice.value?.deviceName || ''
+  closeDialog()
 }
 const currentCategory = ref<CategoryItem>()
 const currentDevice = ref<DeviceItem>()
 const onCurCategoryChange = (data: CategoryItem, node: Node<CategoryItem>) => {
   console.log(`test:>onCurCategoryChange`, data, node)
   currentCategory.value = { ID: data.ID, categoryName: data.categoryName }
-  run(data.ID)
+  getDeviceList(data.ID)
 }
 const onCurDeviceChange = (
   data: DeviceItem,
@@ -155,11 +177,11 @@ const onCurDeviceChange = (
 ) => {
   console.log(`test:>onCurDeviceChange`, data, node, event)
   currentDevice.value = { ID: data.ID, deviceName: data.deviceName }
-  //   radios.value = row.id
 }
-const onClearDevice = () => {
+const onResetDialog = () => {
   currentCategory.value = undefined
   currentDevice.value = undefined
+  getDeviceList()
 }
 
 type CategoryItem = {
@@ -207,6 +229,18 @@ const onQueryDeviceChanged = (query: string) => {
 const filterMethod = (query: string, _data: any, node: Node<any>) => {
   return node.label!.includes(query)
 }
+
+watch(
+  () => dialogVisible.value,
+  (val) => {
+    if (val) {
+      getDeviceList()
+    } else {
+      currentCategory.value = undefined
+      currentDevice.value = undefined
+    }
+  },
+)
 </script>
 
 <style lang="scss" module>
@@ -236,6 +270,7 @@ const filterMethod = (query: string, _data: any, node: Node<any>) => {
           margin-right: 8px;
         }
         .elc-panel-main {
+          flex: 1;
           overflow: auto;
           scrollbar-color: auto;
           scrollbar-width: unset;
