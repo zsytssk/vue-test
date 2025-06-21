@@ -1,9 +1,11 @@
 <template>
-  <el-select
+  <el-select-v2
     v-model="inputValue"
     placeholder="请选择设备"
-    @click="onFocus"
     style="width: 240px"
+    :options="options"
+    @focus="onFocus"
+    clearable
   />
 
   <el-dialog
@@ -24,8 +26,7 @@
           />
         </div>
         <div class="elc-panel-main">
-          <el-tree
-            default-expand-all
+          <el-tree-v2
             highlight-current
             node-key="ID"
             :expand-on-click-node="false"
@@ -35,7 +36,7 @@
             :props="categoryProps"
             :height="339"
             @current-change="onCurCategoryChange"
-            :filterNodeMethod="filterMethod"
+            :filter-method="filterMethod"
           >
             <template #default="{ data, node }">
               <show-tooltip
@@ -51,7 +52,7 @@
             <template #empty>
               <el-empty description="暂无数据" />
             </template>
-          </el-tree>
+          </el-tree-v2>
         </div>
       </div>
       <div class="elc-panel">
@@ -64,7 +65,7 @@
           />
         </div>
         <div class="elc-panel-main">
-          <el-tree
+          <el-tree-v2
             highlight-current
             default-expand-all
             ref="treeDeviceRef"
@@ -75,7 +76,7 @@
             :props="deviceProps"
             :height="339"
             @current-change="onCurDeviceChange"
-            :filterNodeMethod="filterMethod"
+            :filter-method="filterMethod"
           >
             <template #default="{ data, node }">
               <show-tooltip :content="node.label" width="100%" />
@@ -88,7 +89,7 @@
             <template #empty>
               <el-empty description="暂无数据" />
             </template>
-          </el-tree>
+          </el-tree-v2>
         </div>
       </div>
     </div>
@@ -113,7 +114,7 @@
 
 <script setup lang="ts">
 import type { ElTreeV2 } from 'element-plus'
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 import ShowTooltip from '@/components/show-tooltip/show-tooltip.vue'
 import { useOpenDialog } from '@/components/useOpenDialog'
@@ -144,8 +145,9 @@ const { data: deviceList, run: getDeviceList } = useRequest(
     })),
 )
 
-const inputValue = ref('')
+const inputValue = ref<number>()
 const inputRef = ref()
+const options = ref([])
 
 const { dialogVisible, closeDialog, openDialog } = useOpenDialog(false)
 
@@ -160,7 +162,7 @@ const localClosePlanDialog = () => {
   closeDialog()
 }
 const onConfirm = () => {
-  inputValue.value = currentDevice.value?.deviceName || ''
+  inputValue.value = currentDevice.value?.ID
   closeDialog()
 }
 const currentCategory = ref<CategoryItem>()
@@ -229,6 +231,16 @@ const onQueryDeviceChanged = (query: string) => {
 const filterMethod = (query: string, _data: any, node: Node<any>) => {
   return node.label!.includes(query)
 }
+
+onMounted(() => {
+  getDeviceList().then((list) => {
+    options.value = list.map((item: any) => ({
+      value: item.ID,
+      label: item.deviceName,
+    }))
+    console.log(`test:>options:>`, options.value)
+  })
+})
 
 watch(
   () => dialogVisible.value,

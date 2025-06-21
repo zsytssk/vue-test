@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "vue-tsc -b && vite build",
-    "dev": "vite",
+    "dev": "vite --host 0.0.0.0",
     "lint": "eslint src --fix --ext .ts,.tsx,.vue,.js,.jsx,",
     "lint:prettier": "prettier --write src",
     "local-deploy": "./script/deploy.sh",
