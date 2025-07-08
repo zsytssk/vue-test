@@ -21,7 +21,8 @@
     "unplugin-auto-import": "^19.1.2",
     "unplugin-vue-components": "^28.4.1",
     "vite-plugin-mkcert": "^1.17.8",
-    "vue": "^3.5.13"
+    "vue": "^3.5.13",
+    "zod": "^3.25.74"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
