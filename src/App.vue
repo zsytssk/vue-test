@@ -5,7 +5,8 @@
 // import Test from './page/g6-test/index.vue'
 // import Test from './page/select-device/index.vue'
 // import Test from './page/zod-test/index.vue'
-import Test from './page/excel-editor-test/test.vue'
+// import Test from './page/excel-editor-test/test.vue'
+import Test from './page/code-editor/index.vue'
 </script>
 
 <template>
