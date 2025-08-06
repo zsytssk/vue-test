@@ -33,7 +33,7 @@
       </div>
     </template>
     <div class="btn-box">
-      <el-button link icon="plus" @click="addRecord()">新增行</el-button>
+      <el-button link icon="plus" @click="addRecord()">新增行1</el-button>
       <el-button
         v-if="selectedCount > 0"
         link
@@ -242,10 +242,6 @@ const testFn = () => {
           width: 100%;
           height: 100%;
           overflow: hidden;
-        }
-        .component-content,
-        .table-content {
-          height: 100%;
         }
       }
     }

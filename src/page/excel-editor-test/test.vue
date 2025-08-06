@@ -18,7 +18,7 @@ const data = ref(
       phone: `${number}${number}${number}${number}-${number}${number}${number}${number}`,
       gender: `${number & 1 ? 'M' : 'F'}`,
       age: number * 2,
-      birth: `${number * 100}-07-01`,
+      birth: `2020-07-01`,
       name2: `User ${number}`,
       phone2: `${number}${number}${number}${number}-${number}${number}${number}${number}`,
       gender2: `${number & 1 ? 'M' : 'F'}`,

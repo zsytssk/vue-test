@@ -313,14 +313,14 @@
           v-show="showDatePicker"
           style="z-index: 20; position: fixed"
         >
-          <date-picker
-            ref="datepicker"
+          <el-date-picker
             inline
             auto-apply
             v-model="inputDateTime"
             @update:modelValue="datepickerClick"
             valueType="format"
-          ></date-picker>
+            :teleported="true"
+          ></el-date-picker>
         </div>
 
         <!-- Waiting scene -->
@@ -583,10 +583,7 @@ import VueExcelFilter from './VueExcelFilter.vue'
 import PanelFilter from './PanelFilter.vue'
 import PanelSetting from './PanelSetting.vue'
 import PanelFind from './PanelFind.vue'
-import DatePicker from '@vuepic/vue-datepicker'
 import { read, writeFile, utils } from 'xlsx'
-
-import '@vuepic/vue-datepicker/dist/main.css'
 
 export default defineComponent({
   components: {
@@ -594,7 +591,6 @@ export default defineComponent({
     'panel-filter': PanelFilter,
     'panel-setting': PanelSetting,
     'panel-find': PanelFind,
-    'date-picker': DatePicker,
   },
   props: {
     disablePanelSetting: {
@@ -1816,6 +1812,7 @@ export default defineComponent({
     /* *** Window Event *******************************************************************************************
      */
     tableScroll() {
+      console.log(`test:>tableScroll`, this.tableContent.scrollTop)
       this.showDatePicker = false
       this.autocompleteInputs = []
       if (this.focused && this.currentField)
@@ -2376,12 +2373,16 @@ export default defineComponent({
       const outerTop = outerElement?.getBoundingClientRect().top || 0
 
       if (!this.noPaging) {
-        const offset =
-          bottomOffset + (this.summaryRow ? 25 : 0) + (this.noFooter ? 0 : 25)
+        // const offset =
+        //   bottomOffset + (this.summaryRow ? 25 : 0) + (this.noFooter ? 0 : 25)
+        // let controlHeight =
+        //   outerHeight -
+        //   (this.recordBody.getBoundingClientRect().top - outerTop) -
+        //   offset
         let controlHeight =
-          outerHeight -
-          (this.recordBody.getBoundingClientRect().top - outerTop) -
-          offset
+          this.editor.getBoundingClientRect().height -
+          this.footer.getBoundingClientRect().height -
+          30
 
         if (this.height) {
           if (this.height === 'auto') {
