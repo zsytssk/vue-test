@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "vue-tsc -b && vite build",
+    "build": "vite build",
     "dev": "vite --host 0.0.0.0",
     "lint": "eslint src --fix --ext .ts,.tsx,.vue,.js,.jsx,",
     "lint:prettier": "prettier --write src",

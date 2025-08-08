@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // import RxingWasm from './components/rxing-wasm.vue'
 // import HTML5Qrcode from './components/html5QrCode.vue'
-// import HTML5Qrcode2 from './components/html5QrCode2/index.vue'
+import HTML5Qrcode2 from './components/html5QrCode2/index.vue'
 // import Test from './page/g6-test/index.vue'
 // import Test from './page/select-device/index.vue'
 // import Test from './page/zod-test/index.vue'
@@ -12,7 +12,7 @@ import Test from './page/code-editor/index.vue'
 <template>
   <!-- <RxingWasm /> -->
   <!-- <HTML5Qrcode /> -->
-  <!-- <HTML5Qrcode2 /> -->
+  <HTML5Qrcode2 />
   <Test />
 </template>
 
