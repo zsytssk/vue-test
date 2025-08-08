@@ -73,12 +73,28 @@
           placeholder="请选择相机"
           @click="showPicker = true"
         />
-        <van-popup v-model:show="showPicker" position="bottom">
+        <van-popup round v-model:show="showPicker" position="bottom">
           <van-picker
+            ref="pickerCameraRef"
             :columns="cameraList"
             @confirm="onSelectConfirm"
             @cancel="showPicker = false"
           >
+            <template #toolbar>
+              <div class="picker-dialog-footer">
+                <van-button
+                  class="round-button"
+                  round
+                  plain
+                  @click="showPicker = false"
+                >
+                  取消
+                </van-button>
+                <van-button round plain type="primary" @click="confirmPicker()">
+                  确定
+                </van-button>
+              </div>
+            </template>
             <template v-slot:option="option">
               {{ option.label }}
             </template>
@@ -137,6 +153,7 @@ const inputFile = ref<HTMLInputElement>()
 const qrReader = ref<HTMLDivElement>()
 const scanFileBox = ref<HTMLDivElement>()
 
+const pickerCameraRef = ref()
 const resultText = ref('')
 const dialogVisible = ref(false)
 const scanVisible = ref(false)
@@ -247,6 +264,9 @@ const openScanCamera = () => {
 const onSelectConfirm = (val: { selectedOptions: LocalCameraItem[] }) => {
   showPicker.value = false
   selectCamera.value = val?.selectedOptions?.[0].value
+}
+const confirmPicker = () => {
+  pickerCameraRef.value?.confirm()
 }
 
 const startScanCamera = async () => {
@@ -359,6 +379,8 @@ watch(
       justify-content: space-between;
       .van-button {
         border-color: transparent;
+        font-size: 20px;
+        padding: 16px !important;
       }
     }
     .tip {
@@ -441,6 +463,19 @@ watch(
         margin-left: 0;
       }
     }
+  }
+}
+</style>
+
+<style lang="scss" scoped>
+.picker-dialog-footer {
+  display: flex;
+  justify-content: space-between;
+  flex: 1;
+  .van-button {
+    border-color: transparent;
+    font-size: 20px;
+    padding: 16px !important;
   }
 }
 </style>
