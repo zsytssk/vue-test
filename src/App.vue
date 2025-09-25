@@ -5,7 +5,8 @@
 // import Test from './page/zod-test/index.vue'
 // import Test from './page/excel-editor-test/test.vue'
 // import Test from './page/code-editor/index.vue'
-import Test from './page/html5-qrcode/index.vue'
+// import Test from './page/html5-qrcode/index.vue'
+import Test from './page/camera-test/index.vue'
 </script>
 
 <template>

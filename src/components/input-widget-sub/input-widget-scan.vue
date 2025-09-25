@@ -62,6 +62,7 @@
     teleport="body"
     :class="$style.scanDialog"
   >
+    <div class="text-black">{{ JSON.stringify(cameraList) }}</div>
     <div id="qrReader" ref="qrReader" class="videoBox"></div>
     <div class="dialog-footer">
       <div class="select-box">
@@ -126,6 +127,7 @@
 import {
   type ExtraInputWay,
   getCameraId,
+  getCameraLabel,
   getCameras,
   getVideoImgData,
   scanCode,
@@ -298,7 +300,7 @@ watch(
 let init = false
 watch(
   () => scanVisible.value,
-  (val) => {
+  async (val) => {
     if (!val) {
       clearScan()
       return
@@ -308,21 +310,32 @@ watch(
       return
     }
     init = true
-    getCameras().then(([err, list]) => {
-      if (err) {
-        return
-      }
-      cameraList.value = list.map((item) => ({
-        label: item.label,
-        value: item.id,
-      })) as LocalCameraItem[]
-    })
+
     getCameraId().then(([err, cameraId]) => {
       if (err) {
         return
       }
       selectCamera.value = cameraId
     })
+
+    let [err, list] = await getCameras()
+    if (err) {
+      return
+    }
+    // if (!list[0]?.label) {
+    //   const getLabels = await Promise.all(
+    //     list.map((item: any) => getCameraLabel(item.id)),
+    //   )
+    //   list = (list as any[]).map((item, index) => ({
+    //     ...item,
+    //     label: getLabels[index],
+    //   }))
+    // }
+
+    cameraList.value = (list as any[]).map((item) => ({
+      label: item.label || item.id,
+      value: item.id,
+    })) as LocalCameraItem[]
   },
 )
 
@@ -396,6 +409,10 @@ watch(
 .scanDialog {
   overflow: hidden;
   :global {
+    .text-black {
+      color: #000;
+      word-break: break-all;
+    }
     .el-dialog__body {
       display: flex;
       flex: 1;

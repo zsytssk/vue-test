@@ -35,19 +35,55 @@ function getSupportType(type: ExtraInputWay) {
   ]
 }
 
-export function getCameras() {
-  return Html5Qrcode.getCameras()
-    .then((devices) => {
-      if (!devices?.length) {
-        return [true, '没有找到相机'] as const
-      }
-      return [false, devices] as const
-    })
-    .catch((err) => {
-      const msg = err.message ? err.message : err
-      return [true, msg] as const
-    })
+export async function getCameraLabel(cameraId: string) {
+  // 请求特定摄像头
+  const stream = await navigator.mediaDevices.getUserMedia({
+    video: { deviceId: { exact: cameraId } },
+  })
+
+  const track = stream.getVideoTracks()[0]
+  // 结束使用
+  track.stop()
+  return track.label
 }
+
+export async function getCameras() {
+  try {
+    await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment' },
+    })
+
+    const devices = await navigator.mediaDevices.enumerateDevices()
+    const cameras = devices
+      .filter((device) => device.kind === 'videoinput')
+      .map((item) => ({
+        label: item.label,
+        id: item.deviceId,
+      }))
+    // if (!cameras[0]?.label) {
+    //   const labels = await Promise.all(
+    //     cameras.map(async (camera) => getCameraLabel(camera.deviceId)),
+    //   )
+    //   cameras.forEach((item, index) => (item.label = labels[index]))
+    // }
+    return [false, cameras] as const
+  } catch (err) {
+    return [false, '获取设备信息失败'] as const
+  }
+}
+// export function getCameras() {
+//   return Html5Qrcode.getCameras()
+//     .then((devices) => {
+//       if (!devices?.length) {
+//         return [true, '没有找到相机'] as const
+//       }
+//       return [false, devices] as const
+//     })
+//     .catch((err) => {
+//       const msg = err.message ? err.message : err
+//       return [true, msg] as const
+//     })
+// }
 
 export function getCameraId() {
   return Html5Qrcode.getCameras()
