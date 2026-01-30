@@ -6,26 +6,22 @@
 // import Test from './page/excel-editor-test/test.vue'
 // import Test from './page/code-editor/index.vue'
 // import Test from './page/html5-qrcode/index.vue'
-import Test from './page/camera-test/index.vue'
+// import Test from './page/camera-test/index.vue'
+import Test from './page/camera-picture/index.vue'
 </script>
 
 <template>
   <!-- <RxingWasm /> -->
   <!-- <HTML5Qrcode /> -->
   <Test />
+  <!-- <div>
+    <i class="fa-regular fa-user test keepPX"></i>
+    sdfsdfs
+  </div> -->
 </template>
 
 <style scoped>
-.logo {
-  transition: filter 300ms;
-  will-change: filter;
-  padding: 1.5em;
-  height: 6em;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+.test.keepPX {
+  font-size: 20px;
 }
 </style>

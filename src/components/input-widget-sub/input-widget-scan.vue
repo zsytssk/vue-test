@@ -62,7 +62,6 @@
     teleport="body"
     :class="$style.scanDialog"
   >
-    <div class="text-black">{{ JSON.stringify(cameraList) }}</div>
     <div id="qrReader" ref="qrReader" class="videoBox"></div>
     <div class="dialog-footer">
       <div class="select-box">
@@ -74,7 +73,7 @@
           placeholder="请选择相机"
           @click="showPicker = true"
         />
-        <van-popup round v-model:show="showPicker" position="bottom">
+        <van-popup v-model:show="showPicker" round position="bottom">
           <van-picker
             ref="pickerCameraRef"
             :columns="cameraList"
@@ -127,7 +126,6 @@
 import {
   type ExtraInputWay,
   getCameraId,
-  getCameraLabel,
   getCameras,
   getVideoImgData,
   scanCode,
@@ -136,6 +134,7 @@ import {
 } from '@/utils/html5-qrcode'
 import { ElMessage } from 'element-plus'
 import { computed, ref, watch } from 'vue'
+import { isOnAndroidWebview, startScan } from './nativeScanUtils'
 
 type LocalCameraItem = {
   label: string
@@ -260,7 +259,12 @@ const resetScanCamera = async () => {
   await stopScan()
   startScanCamera()
 }
-const openScanCamera = () => {
+const openScanCamera = async () => {
+  if (isOnAndroidWebview()) {
+    const scanCon = await startScan()
+    resultText.value = scanCon
+    return
+  }
   scanVisible.value = true
 }
 const onSelectConfirm = (val: { selectedOptions: LocalCameraItem[] }) => {
@@ -300,7 +304,7 @@ watch(
 let init = false
 watch(
   () => scanVisible.value,
-  async (val) => {
+  (val) => {
     if (!val) {
       clearScan()
       return
@@ -310,32 +314,21 @@ watch(
       return
     }
     init = true
-
+    getCameras().then(([err, list]) => {
+      if (err) {
+        return
+      }
+      cameraList.value = list.map((item) => ({
+        label: item.label || item.id,
+        value: item.id,
+      })) as LocalCameraItem[]
+    })
     getCameraId().then(([err, cameraId]) => {
       if (err) {
         return
       }
       selectCamera.value = cameraId
     })
-
-    let [err, list] = await getCameras()
-    if (err) {
-      return
-    }
-    // if (!list[0]?.label) {
-    //   const getLabels = await Promise.all(
-    //     list.map((item: any) => getCameraLabel(item.id)),
-    //   )
-    //   list = (list as any[]).map((item, index) => ({
-    //     ...item,
-    //     label: getLabels[index],
-    //   }))
-    // }
-
-    cameraList.value = (list as any[]).map((item) => ({
-      label: item.label || item.id,
-      value: item.id,
-    })) as LocalCameraItem[]
   },
 )
 
@@ -409,10 +402,6 @@ watch(
 .scanDialog {
   overflow: hidden;
   :global {
-    .text-black {
-      color: #000;
-      word-break: break-all;
-    }
     .el-dialog__body {
       display: flex;
       flex: 1;

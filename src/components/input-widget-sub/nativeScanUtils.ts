@@ -1,15 +1,7 @@
-<template>
-  <div class="camera-list">enumerateDevices:{{ scanText }}</div>
-  <el-button @click="onClick">click</el-button>
-</template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-const scanText = ref('')
-function isOnAndroidWebview() {
+export function isOnAndroidWebview() {
   return Boolean((window as any).WebViewJavascriptBridge)
 }
-function startScan() {
+export function startScan() {
   return new Promise<string>((resolve, reject) => {
     // 全局函数：处理扫描结果
     ;(window as any).handleScanResult = function (result: any) {
@@ -33,17 +25,3 @@ function startScan() {
     ;(window as any).WebViewJavascriptBridge.callHandler('startScan')
   })
 }
-
-// 开始扫描
-async function onClick() {
-  const text = await startScan()
-  scanText.value = text
-}
-</script>
-<style lang="scss" scoped>
-.camera-list {
-  width: 100%;
-  margin-top: 10px;
-  word-break: break-all;
-}
-</style>
