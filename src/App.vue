@@ -7,7 +7,8 @@
 // import Test from './page/code-editor/index.vue'
 // import Test from './page/html5-qrcode/index.vue'
 // import Test from './page/camera-test/index.vue'
-import Test from './page/camera-picture/index.vue'
+// import Test from './page/camera-picture/index.vue'
+import Test from './page/svg-viewer/index.vue'
 </script>
 
 <template>

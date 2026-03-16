@@ -1,6 +1,6 @@
 <template>
-  <button v-for="(item, index) in points" @click="jumpTo(item)">
-    {{ index + 1 }}
+  <button v-for="(item, index) in points" @click="jump(item)">
+    {{ index }}
   </button>
   <button @click="scaleViewer(1)">+</button>
   <button @click="scaleViewer(-1)">-</button>
@@ -19,22 +19,24 @@
 </template>
 
 <script setup lang="ts">
-import { Application, Graphics, Container } from './pixi.min.mjs'
+import { Application, Graphics, Container } from 'pixi.js'
 
 import { onMounted, ref } from 'vue'
 
-const points = ['2747.03,4845.92', '2864.87,4481.67'].map((item) => {
-  const arr = item.split(',').map(Number)
-  return { x: arr[0] / 2, y: arr[1] / 2 }
-  return { x: arr[0], y: arr[1] }
-})
+const points = ['1531.138484,332.940830', '1594.055856,538.902629'].map(
+  (item) => {
+    const arr = item.split(',').map(Number)
+    return { x: arr[0], y: arr[1] }
+  },
+)
 const canvasRef = ref<HTMLCanvasElement>()
 const canvasBoxRef = ref<HTMLDivElement>()
 const containerRef = ref<Container>()
+const graphicRef = ref<Graphics>()
 const scaleFactor = 1.1
 let defaultScale = 1
 const url =
-  'http://172.18.16.229/glb-files/svg/ccea579bde4a5b1f2df00bc7ab6eb873_20260313154843.svg'
+  'http://172.18.16.229/glb-files/svg/f18bca8a111f99ac086c89ec64aa0dcb_20260313094818.svg'
 onMounted(async () => {
   // Create a new application
   const app = new Application()
@@ -49,29 +51,16 @@ onMounted(async () => {
   })
   const container = new Container()
   app.stage.addChild(container)
-  containerRef.value = container
+
   const svgText = await fetch(url).then((r) => r.text())
-  // const graphic = new Graphics().svg(svgText)
-  const graphic = new Graphics()
-  graphic.svg(svgText)
+  const graphic = new Graphics().svg(svgText)
   container.addChild(graphic)
-  ;(window as any).graphic = graphic
+
+  graphicRef.value = graphic
+  containerRef.value = container
+
   // 初始居中
-  function centerGraphic() {
-    const bounds = graphic.getLocalBounds()
-    graphic.x = -bounds.x
-    graphic.y = -bounds.y
-    const scale = Math.min(
-      canvas.width / bounds.width,
-      canvas.height / bounds.height,
-    )
-    container.scale.x = scale
-    container.scale.y = scale
-    defaultScale = scale
-    container.x = 0
-    container.y = (canvas.height - container.height) / 2
-  }
-  centerGraphic()
+  // centerGraphic()
 
   // ---- 鼠标拖拽平移 ----
   let dragging = false
@@ -109,6 +98,28 @@ onMounted(async () => {
     { passive: false },
   )
 })
+
+function centerGraphic() {
+  const graphic = graphicRef.value
+  const container = containerRef.value
+  const canvas = canvasRef.value as HTMLCanvasElement
+  if (!graphic || !container || !canvas) {
+    return
+  }
+  const bounds = graphic.getLocalBounds()
+  graphic.x = -bounds.x
+  graphic.y = -bounds.y
+  container.x = 0
+  // container.x = (canvas.width - bounds.width) / 2
+  container.y = (canvas.height - bounds.height) / 2
+  const scale = Math.min(
+    canvas.width / bounds.width,
+    canvas.height / bounds.height,
+  )
+  container.scale.x = scale
+  container.scale.y = scale
+  defaultScale = scale
+}
 
 const scaleViewer = (deltaNum: number, mousePos?: { x: number; y: number }) => {
   const container = containerRef.value
@@ -148,68 +159,9 @@ const scaleViewer = (deltaNum: number, mousePos?: { x: number; y: number }) => {
     container.y = mousePos.y - worldPosY * container.scale.y
   } else {
     container.x = 0
-    container.y = (canvas.height - container.height) / 2
+    container.y = 0
   }
-  console.log(`test:>`, mousePos, {
-    containerHeight: container.height,
-    containerWidth: container.width,
-    scaleX: container.scale.x,
-    scaleY: container.scale.y,
-    x: container.x,
-    y: container.y,
-  })
 }
-
-const jumpTo = (pos: { x: number; y: number }) => {
-  const container = containerRef.value
-  const canvas = canvasRef.value as HTMLCanvasElement
-  if (!container || !canvas) {
-    return
-  }
-  container.scale.x = 2
-  container.scale.y = 2
-
-  // container.x = -pos.x * container.scale.x + canvas.width / 2
-  // container.y =
-  //   -(container.height / container.scale.y - pos.y) * container.scale.y +
-  //   canvas.height / 2
-  container.x = -pos.x * container.scale.x + canvas.width / 2
-  container.y = -pos.y * container.scale.y + canvas.height / 2
-  ;(window as any).container = container
-  console.log(
-    `test:>`,
-    pos,
-    { canvasHeight: canvas.height, canvasWidth: canvas.width },
-    {
-      containerHeight: container.height,
-      containerWidth: container.width,
-      scaleX: container.scale.x,
-      scaleY: container.scale.y,
-      x: container.x,
-      y: container.y,
-    },
-  )
-}
-// const jumpTo = (pos: { x: number; y: number }) => {
-//   const container = containerRef.value
-//   const canvas = canvasRef.value as HTMLCanvasElement
-//   if (!container || !canvas) {
-//     return
-//   }
-//   container.scale.x = 5
-//   container.scale.y = 5
-
-//   container.x = (-pos.x * container.scale.x) / 2 + canvas.width / 2
-//   container.y =
-//     (-(container.height - pos.y) * container.scale.y) / 2 + canvas.height / 2
-//   console.log(
-//     `test:>`,
-//     { canvasHeight: canvas.height, canvasWidth: canvas.width },
-//     { containerHeight: container.height, containerWidth: container.width },
-//     pos,
-//     { x: container.x, y: container.y },
-//   )
-// }
 </script>
 
 <style scoped lang="scss">
