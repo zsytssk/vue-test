@@ -1,5 +1,14 @@
-export const initDom = () => {
+export const initDom = (app) => {
   if (import.meta.env.MODE === 'development') {
+    app.config.warnHandler = (msg: any, instance: any, trace: any) => {
+      // 过滤包含 code-location 的非 props 属性警告
+      if (msg.includes('Extraneous non-props attributes (code-location)')) {
+        return // 不输出这个警告
+      }
+      // 其他警告正常打印
+      console.warn(`Vue warn: ${msg}\n${trace}`)
+    }
+
     document.onmousedown = function (e) {
       if (e.shiftKey && e.altKey && e.button === 0) {
         e.preventDefault()

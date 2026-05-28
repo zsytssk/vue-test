@@ -15,11 +15,11 @@ import App from './App.vue'
 import { initDom } from './utils/positionToCode'
 
 import './style.css'
-
-initDom()
+import { i18n } from './page/i18n-test/useI18n.ts'
 
 const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component as any)
 }
-app.use(ElementPlus).use(Vant).mount('#app')
+initDom(app)
+app.use(ElementPlus).use(i18n).use(Vant).mount('#app')

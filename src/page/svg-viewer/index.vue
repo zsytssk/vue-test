@@ -5,6 +5,7 @@
   <button @click="scaleViewer(1)">+</button>
   <button @click="scaleViewer(-1)">-</button>
   <button @click="scaleViewer(0)">reset</button>
+  <button>loading:{{ loadingRef }}</button>
   <div
     ref="canvasBoxRef"
     :style="{
@@ -25,17 +26,20 @@ import { onMounted, ref } from 'vue'
 
 const points = ['2747.03,4845.92', '2864.87,4481.67'].map((item) => {
   const arr = item.split(',').map(Number)
-  return { x: arr[0] / 2, y: arr[1] / 2 }
+  // return { x: arr[0] / 2, y: arr[1] / 2 }
   return { x: arr[0], y: arr[1] }
 })
+const loadingRef = ref(false)
 const canvasRef = ref<HTMLCanvasElement>()
 const canvasBoxRef = ref<HTMLDivElement>()
 const containerRef = ref<Container>()
+const offsetRef = ref<{ x: number; y: number }>()
 const scaleFactor = 1.1
 let defaultScale = 1
 const url =
   'http://172.18.16.229/glb-files/svg/ccea579bde4a5b1f2df00bc7ab6eb873_20260313154843.svg'
 onMounted(async () => {
+  loadingRef.value = true
   // Create a new application
   const app = new Application()
   const canvas = canvasRef.value as HTMLCanvasElement
@@ -55,12 +59,27 @@ onMounted(async () => {
   const graphic = new Graphics()
   graphic.svg(svgText)
   container.addChild(graphic)
+  ;(window as any).app = app
   ;(window as any).graphic = graphic
+  ;(window as any).container = container
+
   // 初始居中
   function centerGraphic() {
     const bounds = graphic.getLocalBounds()
+    // graphic.x = 0
+    // graphic.y = 0
     graphic.x = -bounds.x
     graphic.y = -bounds.y
+    offsetRef.value = {
+      x: bounds.x,
+      y: bounds.y,
+    }
+    console.log(`test:>graphic`, {
+      x: bounds.x,
+      y: bounds.y,
+      width: bounds.width,
+      height: bounds.height,
+    })
     const scale = Math.min(
       canvas.width / bounds.width,
       canvas.height / bounds.height,
@@ -108,11 +127,13 @@ onMounted(async () => {
     },
     { passive: false },
   )
+  loadingRef.value = false
 })
 
 const scaleViewer = (deltaNum: number, mousePos?: { x: number; y: number }) => {
   const container = containerRef.value
   const canvas = canvasRef.value as HTMLCanvasElement
+  console.log(`test:>mousePos`, mousePos)
   if (!container || !canvas) {
     return
   }
@@ -163,7 +184,8 @@ const scaleViewer = (deltaNum: number, mousePos?: { x: number; y: number }) => {
 const jumpTo = (pos: { x: number; y: number }) => {
   const container = containerRef.value
   const canvas = canvasRef.value as HTMLCanvasElement
-  if (!container || !canvas) {
+  const offset = offsetRef.value
+  if (!container || !canvas || !offset) {
     return
   }
   container.scale.x = 2
@@ -173,9 +195,8 @@ const jumpTo = (pos: { x: number; y: number }) => {
   // container.y =
   //   -(container.height / container.scale.y - pos.y) * container.scale.y +
   //   canvas.height / 2
-  container.x = -pos.x * container.scale.x + canvas.width / 2
-  container.y = -pos.y * container.scale.y + canvas.height / 2
-  ;(window as any).container = container
+  container.x = -(pos.x - offset.x) * container.scale.x + canvas.width / 2
+  container.y = -(pos.y - offset.y) * container.scale.y + canvas.height / 2
   console.log(
     `test:>`,
     pos,
