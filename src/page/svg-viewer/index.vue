@@ -20,6 +20,7 @@
 </template>
 
 <script setup lang="ts">
+import { drawCircle } from './drawCircle'
 import { Application, Graphics, Container } from './pixi.min.mjs'
 
 import { onMounted, ref } from 'vue'
@@ -37,7 +38,7 @@ const offsetRef = ref<{ x: number; y: number }>()
 const scaleFactor = 1.1
 let defaultScale = 1
 const url =
-  'http://172.18.16.229/glb-files/svg/ccea579bde4a5b1f2df00bc7ab6eb873_20260313154843.svg'
+  'http://172.18.16.229/glb-files/svg/03f8442ce9be1b2549a7a8d8c58c6a2c_20260311173624.svg'
 onMounted(async () => {
   loadingRef.value = true
   // Create a new application
@@ -55,13 +56,21 @@ onMounted(async () => {
   app.stage.addChild(container)
   containerRef.value = container
   const svgText = await fetch(url).then((r) => r.text())
-  // const graphic = new Graphics().svg(svgText)
+
   const graphic = new Graphics()
+  console.log(`test:>svgText`, svgText)
   graphic.svg(svgText)
   container.addChild(graphic)
   ;(window as any).app = app
   ;(window as any).graphic = graphic
   ;(window as any).container = container
+
+  // const graphic = new Graphics().svg(svgText)
+  // 2. 创建子级 Graphics（一个红色的圆眼睛）
+  const circles = drawCircle()
+  for (const item of circles) {
+    graphic.addChild(item)
+  }
 
   // 初始居中
   function centerGraphic() {
