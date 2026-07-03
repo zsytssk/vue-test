@@ -37,8 +37,10 @@ const containerRef = ref<Container>()
 const offsetRef = ref<{ x: number; y: number }>()
 const scaleFactor = 1.1
 let defaultScale = 1
+// const url =
+//   'http://172.18.16.229/glb-files/svg/03f8442ce9be1b2549a7a8d8c58c6a2c_20260311173624.svg'
 const url =
-  'http://172.18.16.229/glb-files/svg/03f8442ce9be1b2549a7a8d8c58c6a2c_20260311173624.svg'
+  'http://172.18.16.229/glb-files/svg/52a66c64c33832d16ed20d068379686e_20260318141752.svg'
 onMounted(async () => {
   loadingRef.value = true
   // Create a new application
