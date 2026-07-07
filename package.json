@@ -17,6 +17,8 @@
     "@codemirror/view": "^6.38.1",
     "@element-plus/icons-vue": "^0.2.4",
     "@panzoom/panzoom": "^4.6.1",
+    "@resvg/resvg-js": "^2.6.2",
+    "@resvg/resvg-wasm": "^2.6.2",
     "@svg-fns/info": "^1.0.0",
     "@vant/touch-emulator": "^1.4.0",
     "@vuepic/vue-datepicker": "^3.3.0",
