@@ -2,11 +2,14 @@ import Konva from 'konva/lib/Core'
 import { Rect } from 'konva/lib/shapes/Rect'
 import { Transformer } from 'konva/lib/shapes/Transformer'
 import type { KonvaCom } from '.'
+import { Config } from './config'
+import { EmEvent } from './emEvent'
 
 export function useRect(layer: Konva.Layer) {
   // 创建文字
   let rect: Rect
   let transformer: Transformer
+  const { emit, on, once, clear: EmEventClear } = EmEvent()
 
   const init = () => {
     // 创建文字
@@ -21,17 +24,12 @@ export function useRect(layer: Konva.Layer) {
       strokeScaleEnabled: false,
     })
 
-    rect.on('mouseover', function () {
-      document.body.style.cursor = 'pointer'
-    })
-    rect.on('mouseout', function () {
-      document.body.style.cursor = 'default'
-    })
-
     transformer = new Transformer({
       nodes: [rect],
       // enabledAnchors: [],
       rotateEnabled: false,
+      borderStroke: Config.strokeColor,
+      anchorStroke: Config.strokeColor,
       boundBoxFunc: (_oldBox, newBox) => {
         // 限制宽高最小为 30 像素
         newBox.width = Math.max(30, newBox.width)
@@ -42,6 +40,23 @@ export function useRect(layer: Konva.Layer) {
 
     layer.add(rect)
     layer.add(transformer)
+    initEvent()
+  }
+
+  const initEvent = () => {
+    rect.on('mouseover', function () {
+      document.body.style.cursor = 'pointer'
+    })
+    rect.on('mouseout', function () {
+      document.body.style.cursor = 'default'
+    })
+    transformer.on('click pointerdown', () => {
+      emit('focus')
+    })
+
+    rect.on('click pointerdown', () => {
+      emit('focus')
+    })
   }
 
   const destroy = () => {
@@ -50,10 +65,27 @@ export function useRect(layer: Konva.Layer) {
     }
     rect.destroy()
     transformer.destroy()
+    EmEventClear()
+  }
+
+  const onSelect = () => {
+    transformer.borderStroke(Config.strokeColorActive)
+    transformer.anchorStroke(Config.strokeColorActive)
+    layer.batchDraw()
+  }
+  const unSelect = () => {
+    transformer.borderStroke(Config.strokeColor)
+    transformer.anchorStroke(Config.strokeColor)
+    layer.batchDraw()
   }
 
   return {
+    name: 'rect',
+    on,
+    once,
     init,
     destroy,
+    onSelect,
+    unSelect,
   } as KonvaCom
 }

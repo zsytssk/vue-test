@@ -19,20 +19,35 @@ const triggerAction = (action: string) => {
     const text = useText(layerRef.value!)
     text.init()
     components.push(text)
+    initComEvent(text)
     return
   }
   if (action == 'rect') {
     const rect = useRect(layerRef.value!)
     rect.init()
     components.push(rect)
+    initComEvent(rect)
     return
   }
   if (action == 'arrow') {
     const arrow = useArrow(layerRef.value!)
     arrow.init()
     components.push(arrow)
+    initComEvent(arrow)
     return
   }
+}
+
+const initComEvent = (com: KonvaCom) => {
+  com.on('focus', () => {
+    for (const item of components) {
+      if (item === com) {
+        item.onSelect()
+      } else {
+        item.unSelect()
+      }
+    }
+  })
 }
 
 onMounted(() => {

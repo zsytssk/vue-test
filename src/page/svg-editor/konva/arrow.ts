@@ -3,9 +3,12 @@ import { Arrow } from 'konva/lib/shapes/Arrow'
 import { Circle } from 'konva/lib/shapes/Circle'
 import { Rect } from 'konva/lib/shapes/Rect'
 import type { KonvaCom } from '.'
+import { Config } from './config'
+import { EmEvent } from './emEvent'
 
 export function useArrow(layer: Konva.Layer) {
-  // 创建文字
+  const { emit, on, once, clear: EmEventClear } = EmEvent()
+
   const arrowGroup = new Konva.Group({
     x: 0,
     y: 0,
@@ -66,7 +69,7 @@ export function useArrow(layer: Konva.Layer) {
       y: y1,
       width: x2 - x1,
       height: y2 - y1,
-      stroke: '#3b82f6',
+      stroke: Config.strokeColor,
       strokeWidth: 2,
       dash: [4, 4],
       draggable: true,
@@ -80,6 +83,19 @@ export function useArrow(layer: Konva.Layer) {
   }
 
   function initEvent() {
+    arrow.on('click pointerdown', () => {
+      emit('focus')
+    })
+    borderRect.on('click pointerdown', () => {
+      emit('focus')
+    })
+
+    startHandle.on('click pointerdown', () => {
+      emit('focus')
+    })
+    endHandle.on('click pointerdown', () => {
+      emit('focus')
+    })
     // ========== 8. 控制点拖拽事件 ==========
     startHandle!.on('dragmove', () => {
       x1 = startHandle!.x()
@@ -96,13 +112,17 @@ export function useArrow(layer: Konva.Layer) {
     })
 
     // ========== 9. 矩形拖拽事件：整个箭头组跟随移动 ==========
-    borderRect.on('dragmove', () => {
-      // 更新所有坐标
-      x1 = borderRect.x()
-      y1 = borderRect.y()
-      x2 = borderRect.x() + borderRect.width()
-      y2 = borderRect.y() + borderRect.height()
+    borderRect.on('dragmove', (e) => {
+      const dx = e.evt.movementX || 0
+      const dy = e.evt.movementY || 0
 
+      // 如果 movementX/movementY 不可用，使用方案一
+      if (dx === 0 && dy === 0) return
+
+      x1 += dx
+      y1 += dy
+      x2 += dx
+      y2 += dy
       updateArrowAndGroup()
     })
   }
@@ -119,7 +139,6 @@ export function useArrow(layer: Konva.Layer) {
     startHandle!.y(y1)
     endHandle!.x(x2)
     endHandle!.y(y2)
-
     borderRect.x(Math.min(x1, x2)) // 左上角 x
     borderRect.y(Math.min(y1, y2)) // 左上角 y
     borderRect.width(Math.abs(x2 - x1)) // 宽度
@@ -132,10 +151,22 @@ export function useArrow(layer: Konva.Layer) {
     }
     arrowGroup.destroy()
     borderRect.destroy()
+    EmEventClear()
+  }
+
+  const onSelect = () => {
+    borderRect.stroke(Config.strokeColorActive)
+  }
+  const unSelect = () => {
+    borderRect.stroke(Config.strokeColor)
   }
 
   return {
+    on,
+    once,
     init,
     destroy,
+    onSelect,
+    unSelect,
   } as KonvaCom
 }
