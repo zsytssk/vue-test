@@ -22,6 +22,8 @@ https://github.com/konvajs/konva
 
 - 箭头的大小不应增大
 
+- @ques borderRect 移动时 方向的问题
+
 ## 2025-09-22 15:22:23
 
 - 方案1

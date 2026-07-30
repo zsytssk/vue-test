@@ -97,28 +97,13 @@ export function useArrow(layer: Konva.Layer) {
 
     // ========== 9. 矩形拖拽事件：整个箭头组跟随移动 ==========
     borderRect.on('dragmove', () => {
-      // 计算位移量
-      const dx = borderRect.x() - x1
-      const dy = borderRect.y() - y1
-
       // 更新所有坐标
-      x1 += dx
-      y1 += dy
-      x2 += dx
-      y2 += dy
+      x1 = borderRect.x()
+      y1 = borderRect.y()
+      x2 = borderRect.x() + borderRect.width()
+      y2 = borderRect.y() + borderRect.height()
 
-      // 更新箭头组内部元素（相对位置不变，但 Group 的位置变了）
-      // 实际上，更好的方式是用 Group 整体移动
-      // 但由于箭头和控制点是在 Group 内部，我们可以直接移动 Group
-      arrowGroup.x(arrowGroup.x() + dx)
-      arrowGroup.y(arrowGroup.y() + dy)
-
-      // 但是箭头和控制点的坐标是相对于 Group 的，不需要改变
-      // 只需要更新矩形
-      borderRect.x(x1)
-      borderRect.y(y1)
-
-      layer.batchDraw()
+      updateArrowAndGroup()
     })
   }
 

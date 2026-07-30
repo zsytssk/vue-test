@@ -30,7 +30,7 @@ export function useRect(layer: Konva.Layer) {
 
     transformer = new Transformer({
       nodes: [rect],
-      enabledAnchors: [],
+      // enabledAnchors: [],
       rotateEnabled: false,
       boundBoxFunc: (_oldBox, newBox) => {
         // 限制宽高最小为 30 像素
