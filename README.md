@@ -20,17 +20,17 @@ https://github.com/konvajs/konva
   - 箭头
   - 文字
 
-- @ques 选中的颜色变化
-
-- @ques 缺少选中的逻辑
-
 - @diff 和pixi放大缩小保持同步
+
+- @ques 无法编辑状态 transformer 都无用 arrow没有circle
 
 - event
   - 怎么触发选中 -> 元素本身 + transformer 都可以触发
 
 ---
 
+- @ques 选中的颜色变化
+- @ques 缺少选中的逻辑
 - 箭头的大小不应增大
 
 - @ques borderRect 移动时 方向的问题
