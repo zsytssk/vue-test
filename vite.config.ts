@@ -4,9 +4,10 @@ import AutoImport from 'unplugin-auto-import/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
 import { ConfigEnv, loadEnv } from 'vite'
-import postCssPxToRem from 'postcss-pxtorem'
+// import postCssPxToRem from 'postcss-pxtorem'
 import WaPosition from './script/waPosition'
 import WaPositionServer from './script/waPositionServer'
+import vueJsx from '@vitejs/plugin-vue-jsx'
 
 export default ({ mode }: ConfigEnv) => {
   const env = loadEnv(mode, process.cwd())
@@ -41,13 +42,13 @@ export default ({ mode }: ConfigEnv) => {
     css: {
       postcss: {
         plugins: [
-          postCssPxToRem({
-            rootValue: 100, // The base font size for the root element (1rem = 16px by default)
-            propList: ['*'], // Properties to convert, use '*' to convert all properties
-            unitPrecision: 5, // The decimal numbers to allow the REM units to grow to
-            selectorBlackList: ['.keepPX'], // Selectors to ignore and leave as px
-            minPixelValue: 2, // Set the minimum pixel value to replace
-          }),
+          // postCssPxToRem({
+          //   rootValue: 100, // The base font size for the root element (1rem = 16px by default)
+          //   propList: ['*'], // Properties to convert, use '*' to convert all properties
+          //   unitPrecision: 5, // The decimal numbers to allow the REM units to grow to
+          //   selectorBlackList: ['.keepPX'], // Selectors to ignore and leave as px
+          //   minPixelValue: 2, // Set the minimum pixel value to replace
+          // }),
         ],
       },
     },
@@ -75,6 +76,7 @@ export default ({ mode }: ConfigEnv) => {
       env.VITE_POSITION === 'open' && WaPositionServer(),
       env.VITE_POSITION === 'open' && WaPosition(),
       vue(),
+      vueJsx(),
       AutoImport({
         resolvers: [ElementPlusResolver()],
       }),

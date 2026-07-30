@@ -56,7 +56,6 @@ onMounted(() => {
   layer.add(transformer)
 
   // 4. 关键一步：将 Transformer 绑定到矩形上
-  transformer.nodes([rect])
 })
 </script>
 <style lang="scss" scoped>

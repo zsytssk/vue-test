@@ -8,6 +8,8 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ElButton: typeof import('element-plus/es')['ElButton']
+    ElIcon: typeof import('element-plus/es')['ElIcon']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     Html5QrCode: typeof import('./src/components/html5QrCode.vue')['default']
     InputWidgetScan: typeof import('./src/components/input-widget-sub/input-widget-scan.vue')['default']
