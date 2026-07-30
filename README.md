@@ -1,3 +1,27 @@
+## 2026-07-30 10:20:23
+
+https://codesandbox.io/embed/github/polotno-project/polotno-site/tree/source/examples/polotno-demo?fontsize=11&hidenavigation=1&theme=dark&view=preview
+
+https://konvajs.org/docs/overview.html
+
+https://github.com/konvajs/konva
+
+- @todo
+  - 选中某个组件
+  - 编辑大小 | 颜色
+  - 生成svg | 渲染svg
+  - 在svg渲染层之上渲染
+  - 下次再编辑
+  - 工具栏
+    - 新建 删除
+  - 属性侧边栏
+  - ***
+  - 矩形
+  - 箭头
+  - 文字
+
+- 箭头的大小不应增大
+
 ## 2025-09-22 15:22:23
 
 - 方案1

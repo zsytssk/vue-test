@@ -25,6 +25,7 @@
     "codemirror": "^6.0.2",
     "element-plus": "^2.9.7",
     "html5-qrcode": "^2.3.8",
+    "konva": "~10.3.0",
     "pixi.js": "^8.17.0",
     "rxing-wasm": "^0.3.6",
     "sass": "^1.86.3",
