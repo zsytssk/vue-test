@@ -4,13 +4,14 @@ import { Transformer } from 'konva/lib/shapes/Transformer'
 import type { KonvaCom } from '.'
 import { Config } from './config'
 import { EmEvent } from './emEvent'
+import { useBase } from './base'
 
 export function useRect(layer: Konva.Layer, editable = true) {
   // 创建文字
   let rect: Rect
   let transformer: Transformer
   const { emit, on, once, clear: EmEventClear } = EmEvent()
-
+  const base = useBase()
   const init = () => {
     // 创建文字
     rect = new Rect({
@@ -65,6 +66,7 @@ export function useRect(layer: Konva.Layer, editable = true) {
     if (!rect) {
       return
     }
+    emit('destroy')
     rect.destroy()
     transformer?.destroy()
     EmEventClear()
@@ -82,7 +84,9 @@ export function useRect(layer: Konva.Layer, editable = true) {
   }
 
   return {
-    name: 'rect',
+    ...base,
+    type: 'rect',
+    getModel: () => rect,
     on,
     once,
     init,

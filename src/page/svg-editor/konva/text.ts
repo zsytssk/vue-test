@@ -4,15 +4,16 @@ import { Transformer } from 'konva/lib/shapes/Transformer'
 import type { KonvaCom } from '.'
 import { Config } from './config'
 import { EmEvent } from './emEvent'
+import { useBase } from './base'
 
 export function useText(layer: Konva.Layer, editable = true) {
   // 创建文字
-  let text: Text
   let transformer: Transformer
   const { emit, on, once, clear: EmEventClear } = EmEvent()
+  const base = useBase()
+  let text: Text
 
   const init = () => {
-    // 创建文字
     text = new Text({
       x: 100,
       y: 100,
@@ -22,21 +23,25 @@ export function useText(layer: Konva.Layer, editable = true) {
       fill: '#333333',
       draggable: editable, // 允许拖动
     })
-
     layer.add(text)
+
     if (editable) {
       transformer = new Transformer({
         nodes: [text],
         padding: 5,
         borderDash: [4, 2],
-        enabledAnchors: [],
+        enabledAnchors: ['middle-left', 'middle-right'],
         rotateEnabled: false,
         borderStroke: Config.strokeColor,
         anchorStroke: Config.strokeColor,
         boundBoxFunc: (_oldBox, newBox) => {
           // 限制宽高最小为 30 像素
-          newBox.width = Math.max(30, newBox.width)
-          newBox.height = Math.max(30, newBox.height)
+          const newWidth = text.width() * text.scaleX()
+          const fontSize = text.fontSize() + 1
+          text.setAttrs({
+            width: Math.max(fontSize, newWidth),
+            scaleX: 1,
+          })
           return newBox
         },
       })
@@ -54,12 +59,18 @@ export function useText(layer: Konva.Layer, editable = true) {
     text.on('click pointerdown', () => {
       emit('focus')
     })
+    text.on('fontSizeChange', (e) => {
+      if (text.width() <= (e as any).newVal) {
+        text.setAttr('width', (e as any).newVal + 1)
+      }
+    })
   }
 
   const destroy = () => {
     if (!text) {
       return
     }
+    emit('destroy')
     text.destroy()
     transformer?.destroy()
     EmEventClear()
@@ -75,6 +86,9 @@ export function useText(layer: Konva.Layer, editable = true) {
   }
 
   return {
+    ...base,
+    type: 'text',
+    getModel: () => text,
     on,
     once,
     init,

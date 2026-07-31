@@ -5,10 +5,11 @@ import { Rect } from 'konva/lib/shapes/Rect'
 import type { KonvaCom } from '.'
 import { Config } from './config'
 import { EmEvent } from './emEvent'
+import { useBase } from './base'
 
 export function useArrow(layer: Konva.Layer, editable = true) {
   const { emit, on, once, clear: EmEventClear } = EmEvent()
-
+  const base = useBase()
   const arrowGroup = new Konva.Group({
     x: 0,
     y: 0,
@@ -169,6 +170,7 @@ export function useArrow(layer: Konva.Layer, editable = true) {
     if (!arrowGroup) {
       return
     }
+    emit('destroy')
     arrowGroup.destroy()
     borderRect?.destroy()
     EmEventClear()
@@ -182,6 +184,9 @@ export function useArrow(layer: Konva.Layer, editable = true) {
   }
 
   return {
+    ...base,
+    type: 'arrow',
+    getModel: () => arrow,
     on,
     once,
     init,
