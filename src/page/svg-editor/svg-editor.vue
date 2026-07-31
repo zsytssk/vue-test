@@ -14,17 +14,29 @@
 
 <script setup lang="ts">
 import Konva from 'konva/lib/Core'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import Toolbar from './components/toolbar.vue'
 import { useArrow, useRect, useText, type KonvaCom } from './konva/index.ts'
 import Text from './components/editPanel/text.vue'
 import Rect from './components/editPanel/rect.vue'
 import Arrow from './components/editPanel/arrow.vue'
+import { useElementSize } from '@vueuse/core'
 
+const stageRef = ref<Konva.Stage>()
 const layerRef = ref<Konva.Layer>()
 const boxRef = ref<HTMLDivElement>()
 const components = ref([] as KonvaCom[])
 const curComRef = ref<KonvaCom>()
+const { width, height } = useElementSize(boxRef)
+
+watch(
+  () => [width.value, height.value],
+  ([width, height]) => {
+    stageRef.value?.width(width)
+    stageRef.value?.height(height)
+  },
+)
+
 const triggerAction = (action: string) => {
   if (action == 'text') {
     const text = useText(layerRef.value!)
@@ -79,6 +91,7 @@ onMounted(() => {
   var layer = new Konva.Layer()
   stage.add(layer)
   layerRef.value = layer
+  stageRef.value = stage
 })
 </script>
 <style lang="scss" scoped>

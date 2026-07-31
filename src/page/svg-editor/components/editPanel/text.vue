@@ -61,6 +61,24 @@
         ></el-option>
       </el-select>
     </div>
+    <div class="panelRow">
+      <div>
+        <span style="color: red">*</span>
+        水平对齐
+      </div>
+      <el-select
+        size="small"
+        v-model="align"
+        style="width: 90%; font-size: 12px"
+      >
+        <el-option
+          v-for="item in alignOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        ></el-option>
+      </el-select>
+    </div>
   </Node>
 </template>
 
@@ -77,11 +95,17 @@ const fontSize = useKonvaValue(model, 'fontSize')
 const color = useKonvaValue(model, 'fill')
 const fontFamily = useKonvaValue(model, 'fontFamily')
 const fontWeight = useKonvaValue(model, 'fontStyle')
+const align = useKonvaValue(model, 'align')
 const fontWeightOptions = [
   { label: 'Lighter', value: 'lighter' },
   { label: 'Normal', value: 'normal' },
   { label: 'Medium', value: 'bold' },
   { label: 'Bold', value: 'bolder' },
+]
+const alignOptions = [
+  { label: 'Left', value: 'left' },
+  { label: 'Center', value: 'center' },
+  { label: 'Right', value: 'right' },
 ]
 </script>
 <style lang="scss" scoped></style>

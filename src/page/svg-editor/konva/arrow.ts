@@ -25,12 +25,13 @@ export function useArrow(layer: Konva.Layer, editable = true) {
     y1 = 50,
     x2 = 200,
     y2 = 150
+  const rectWidth = 20
 
   const init = () => {
     arrow = new Arrow({
       points: [x1, y1, x2, y2],
-      pointerLength: 20,
-      pointerWidth: 20,
+      pointerLength: 15,
+      pointerWidth: 15,
       fill: 'red',
       stroke: 'red',
       strokeWidth: 4,
@@ -66,12 +67,18 @@ export function useArrow(layer: Konva.Layer, editable = true) {
       })
       arrowGroup.add(endHandle)
 
+      // 计算角度
+      const angle = Math.atan2(y2 - y1, x2 - x1)
+      const degrees = angle * (180 / Math.PI)
+      const width = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
       borderRect = new Rect({
         x: x1,
         y: y1,
-        width: x2 - x1,
-        height: y2 - y1,
+        width: width,
+        height: rectWidth,
+        offsetY: rectWidth / 2,
         stroke: Config.strokeColor,
+        rotation: degrees,
         strokeWidth: 2,
         dash: [4, 2],
         draggable: true,
@@ -154,16 +161,21 @@ export function useArrow(layer: Konva.Layer, editable = true) {
     arrow.points([x1, y1, x2, y2])
     arrow?.x(0)
     arrow?.y(0)
+    const angle = Math.atan2(y2 - y1, x2 - x1)
+    const degrees = angle * (180 / Math.PI)
 
     // 更新控制点
     startHandle!.x(x1)
     startHandle!.y(y1)
     endHandle!.x(x2)
     endHandle!.y(y2)
-    borderRect.x(Math.min(x1, x2)) // 左上角 x
-    borderRect.y(Math.min(y1, y2)) // 左上角 y
-    borderRect.width(Math.abs(x2 - x1)) // 宽度
-    borderRect.height(Math.abs(y2 - y1)) // 高度
+
+    // 计算中心点
+    const width = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
+    borderRect.x(x1)
+    borderRect.y(y1)
+    borderRect.width(width)
+    borderRect.rotation(degrees) // 旋转到箭头方向
   }
 
   const destroy = () => {

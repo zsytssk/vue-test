@@ -7,21 +7,38 @@ https://konvajs.org/docs/overview.html
 https://github.com/konvajs/konva
 
 - @todo
-  - 选中某个组件
-  - 编辑大小 | 颜色
   - 生成svg | 渲染svg
   - 在svg渲染层之上渲染
   - 下次再编辑
   - 工具栏
     - 新建 删除
-  - 属性侧边栏
   - ***
+  - 属性侧边栏
+  - 选中某个组件
+  - 编辑大小 | 颜色
   - 矩形
   - 箭头
   - 文字
 
 - @diff 和pixi放大缩小保持同步
 
+- @todo 下次再编辑
+
+- @ques 编辑历史的 后退前进
+
+- @diff 上下两层不同的元素导致 下层无法被选中 怎么办？
+  - 原始的svg中有哪些需要被选中?
+
+- 要不要把 event destroy 移动到base中？
+- @ques 要不要做一个com列表
+
+---
+
+- 修改stage的大小 scale
+  - 自适应屏幕
+
+- arrow react 优化
+  - 跟随箭头的方向，可以移动 浅的颜色
 - @todo 编辑panel
   - 文字 颜色 字号 粗细
   - rect 颜色 粗细
@@ -29,9 +46,6 @@ https://github.com/konvajs/konva
 
 - event
   - 怎么触发选中 -> 元素本身 + transformer 都可以触发
-
----
-
 - @ques 无法编辑状态 transformer 都无用 arrow没有circle
 
 - @diff arrow 的箭头无法选中
@@ -39,11 +53,11 @@ https://github.com/konvajs/konva
 - @ques 缺少选中的逻辑
 - 箭头的大小不应增大
 
+- 方案1
+
 - @ques borderRect 移动时 方向的问题
 
 ## 2025-09-22 15:22:23
-
-- 方案1
 
 ```
 getUserMedia之后再去请求摄像头

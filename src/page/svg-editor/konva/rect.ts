@@ -28,6 +28,7 @@ export function useRect(layer: Konva.Layer, editable = true) {
       transformer = new Transformer({
         nodes: [rect],
         borderDash: [4, 2],
+        padding: 5,
         // enabledAnchors: [],
         rotateEnabled: false,
         borderStroke: Config.strokeColor,
