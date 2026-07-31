@@ -5,7 +5,7 @@ import type { KonvaCom } from '.'
 import { Config } from './config'
 import { EmEvent } from './emEvent'
 
-export function useRect(layer: Konva.Layer) {
+export function useRect(layer: Konva.Layer, editable = true) {
   // 创建文字
   let rect: Rect
   let transformer: Transformer
@@ -20,26 +20,28 @@ export function useRect(layer: Konva.Layer) {
       height: 50,
       stroke: 'red',
       strokeWidth: 4,
-      draggable: true,
+      draggable: editable,
       strokeScaleEnabled: false,
     })
-
-    transformer = new Transformer({
-      nodes: [rect],
-      // enabledAnchors: [],
-      rotateEnabled: false,
-      borderStroke: Config.strokeColor,
-      anchorStroke: Config.strokeColor,
-      boundBoxFunc: (_oldBox, newBox) => {
-        // 限制宽高最小为 30 像素
-        newBox.width = Math.max(30, newBox.width)
-        newBox.height = Math.max(30, newBox.height)
-        return newBox
-      },
-    })
+    if (editable) {
+      transformer = new Transformer({
+        nodes: [rect],
+        borderDash: [4, 2],
+        // enabledAnchors: [],
+        rotateEnabled: false,
+        borderStroke: Config.strokeColor,
+        anchorStroke: Config.strokeColor,
+        boundBoxFunc: (_oldBox, newBox) => {
+          // 限制宽高最小为 30 像素
+          newBox.width = Math.max(30, newBox.width)
+          newBox.height = Math.max(30, newBox.height)
+          return newBox
+        },
+      })
+      layer.add(transformer)
+    }
 
     layer.add(rect)
-    layer.add(transformer)
     initEvent()
   }
 
@@ -50,7 +52,7 @@ export function useRect(layer: Konva.Layer) {
     rect.on('mouseout', function () {
       document.body.style.cursor = 'default'
     })
-    transformer.on('click pointerdown', () => {
+    transformer?.on('click pointerdown', () => {
       emit('focus')
     })
 
@@ -64,18 +66,18 @@ export function useRect(layer: Konva.Layer) {
       return
     }
     rect.destroy()
-    transformer.destroy()
+    transformer?.destroy()
     EmEventClear()
   }
 
   const onSelect = () => {
-    transformer.borderStroke(Config.strokeColorActive)
-    transformer.anchorStroke(Config.strokeColorActive)
+    transformer?.borderStroke(Config.strokeColorActive)
+    transformer?.anchorStroke(Config.strokeColorActive)
     layer.batchDraw()
   }
   const unSelect = () => {
-    transformer.borderStroke(Config.strokeColor)
-    transformer.anchorStroke(Config.strokeColor)
+    transformer?.borderStroke(Config.strokeColor)
+    transformer?.anchorStroke(Config.strokeColor)
     layer.batchDraw()
   }
 

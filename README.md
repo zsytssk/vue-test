@@ -22,13 +22,19 @@ https://github.com/konvajs/konva
 
 - @diff 和pixi放大缩小保持同步
 
-- @ques 无法编辑状态 transformer 都无用 arrow没有circle
+- @todo 编辑panel
+  - 文字 颜色 字号 粗细
+  - rect 颜色 粗细
+  - arrow 颜色 粗细
 
 - event
   - 怎么触发选中 -> 元素本身 + transformer 都可以触发
 
 ---
 
+- @ques 无法编辑状态 transformer 都无用 arrow没有circle
+
+- @diff arrow 的箭头无法选中
 - @ques 选中的颜色变化
 - @ques 缺少选中的逻辑
 - 箭头的大小不应增大

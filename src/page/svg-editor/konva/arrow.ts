@@ -6,7 +6,7 @@ import type { KonvaCom } from '.'
 import { Config } from './config'
 import { EmEvent } from './emEvent'
 
-export function useArrow(layer: Konva.Layer) {
+export function useArrow(layer: Konva.Layer, editable = true) {
   const { emit, on, once, clear: EmEventClear } = EmEvent()
 
   const arrowGroup = new Konva.Group({
@@ -30,70 +30,74 @@ export function useArrow(layer: Konva.Layer) {
       points: [x1, y1, x2, y2],
       pointerLength: 20,
       pointerWidth: 20,
-      fill: '#3b82f6',
-      stroke: '#3b82f6',
+      fill: 'red',
+      stroke: 'red',
       strokeWidth: 4,
-      draggable: false,
+      draggable: true,
       strokeScaleEnabled: false,
     })
     arrowGroup.add(arrow)
 
-    // ========== 4. 创建起点控制柄 ==========
-    startHandle = new Circle({
-      x: x1,
-      y: y1,
-      radius: 6,
-      fill: '#ffffff',
-      stroke: '#3b82f6',
-      strokeWidth: 2,
-      draggable: true,
-      strokeScaleEnabled: false,
-    })
-    arrowGroup.add(startHandle)
+    if (editable) {
+      // ========== 4. 创建起点控制柄 ==========
+      startHandle = new Circle({
+        x: x1,
+        y: y1,
+        radius: 6,
+        fill: '#ffffff',
+        stroke: '#3b82f6',
+        strokeWidth: 2,
+        draggable: true,
+        strokeScaleEnabled: false,
+      })
+      arrowGroup.add(startHandle)
 
-    // ========== 5. 创建终点控制柄 ==========
-    endHandle = new Circle({
-      x: x2,
-      y: y2,
-      radius: 6,
-      fill: '#ffffff',
-      stroke: '#3b82f6',
-      strokeWidth: 2,
-      draggable: true,
-      strokeScaleEnabled: false,
-    })
-    arrowGroup.add(endHandle)
+      // ========== 5. 创建终点控制柄 ==========
+      endHandle = new Circle({
+        x: x2,
+        y: y2,
+        radius: 6,
+        fill: '#ffffff',
+        stroke: '#3b82f6',
+        strokeWidth: 2,
+        draggable: true,
+        strokeScaleEnabled: false,
+      })
+      arrowGroup.add(endHandle)
 
-    borderRect = new Rect({
-      x: x1,
-      y: y1,
-      width: x2 - x1,
-      height: y2 - y1,
-      stroke: Config.strokeColor,
-      strokeWidth: 2,
-      dash: [4, 4],
-      draggable: true,
-      strokeScaleEnabled: false,
-    })
+      borderRect = new Rect({
+        x: x1,
+        y: y1,
+        width: x2 - x1,
+        height: y2 - y1,
+        stroke: Config.strokeColor,
+        strokeWidth: 2,
+        dash: [4, 2],
+        draggable: true,
+        strokeScaleEnabled: false,
+      })
 
-    layer.add(borderRect)
+      layer.add(borderRect)
+    }
+
     layer.add(arrowGroup)
-
-    initEvent()
+    if (editable) {
+      initEvent()
+    }
   }
 
   function initEvent() {
-    arrow.on('click pointerdown', () => {
+    arrow?.on('click pointerdown', () => {
       emit('focus')
     })
-    borderRect.on('click pointerdown', () => {
+    borderRect?.on('click pointerdown', () => {
       emit('focus')
     })
 
-    startHandle.on('click pointerdown', () => {
+    startHandle?.on('click pointerdown', () => {
       emit('focus')
     })
-    endHandle.on('click pointerdown', () => {
+    endHandle?.on('click pointerdown', () => {
       emit('focus')
     })
     // ========== 8. 控制点拖拽事件 ==========
@@ -111,6 +115,20 @@ export function useArrow(layer: Konva.Layer) {
       layer.batchDraw()
     })
 
+    arrow!.on('dragmove', (e) => {
+      const dx = e.evt.movementX || 0
+      const dy = e.evt.movementY || 0
+
+      // // 如果 movementX/movementY 不可用，使用方案一
+      if (dx === 0 && dy === 0) return
+
+      x1 += dx
+      y1 += dy
+      x2 += dx
+      y2 += dy
+
+      updateArrowAndGroup()
+    })
     // ========== 9. 矩形拖拽事件：整个箭头组跟随移动 ==========
     borderRect.on('dragmove', (e) => {
       const dx = e.evt.movementX || 0
@@ -133,6 +151,8 @@ export function useArrow(layer: Konva.Layer) {
 
     // 更新箭头
     arrow.points([x1, y1, x2, y2])
+    arrow?.x(0)
+    arrow?.y(0)
 
     // 更新控制点
     startHandle!.x(x1)
@@ -150,7 +170,7 @@ export function useArrow(layer: Konva.Layer) {
       return
     }
     arrowGroup.destroy()
-    borderRect.destroy()
+    borderRect?.destroy()
     EmEventClear()
   }
 
