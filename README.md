@@ -1,3 +1,37 @@
+## 2026-08-03 11:20:52
+
+```
+arrow!.on('dragmove', (e) => {
+      const dx = e.evt.movementX || 0
+      const dy = e.evt.movementY || 0
+
+      // // 如果 movementX/movementY 不可用，使用方案一
+      if (dx === 0 && dy === 0) return
+
+      x1 += dx
+      y1 += dy
+      x2 += dx
+      y2 += dy
+
+      updateArrowAndGroup()
+    })
+    // ========== 9. 矩形拖拽事件：整个箭头组跟随移动 ==========
+    borderRect.on('dragmove', (e) => {
+      const dx = e.evt.movementX || 0
+      const dy = e.evt.movementY || 0
+
+      // 如果 movementX/movementY 不可用，使用方案一
+      if (dx === 0 && dy === 0) return
+
+      x1 += dx
+      y1 += dy
+      x2 += dx
+      y2 += dy
+      updateArrowAndGroup()
+    })
+这个movementX，movementY，要根据layer的scale做出修改 有没有什么更好的方式
+```
+
 ## 2026-07-30 10:20:23
 
 https://codesandbox.io/embed/github/polotno-project/polotno-site/tree/source/examples/polotno-demo?fontsize=11&hidenavigation=1&theme=dark&view=preview
@@ -10,9 +44,9 @@ https://github.com/konvajs/konva
   - 生成svg | 渲染svg
   - 在svg渲染层之上渲染
   - 下次再编辑
+  - ***
   - 工具栏
     - 新建 删除
-  - ***
   - 属性侧边栏
   - 选中某个组件
   - 编辑大小 | 颜色
@@ -20,24 +54,24 @@ https://github.com/konvajs/konva
   - 箭头
   - 文字
 
-- @todo 直接用konva渲染svg -> 完成现在的所有svg渲染功能
-  - 对比两者消耗的内容大小
-    - pixi 内存占用更少 cpu也更少
-    - konva 更少
-
-- @diff 和pixi放大缩小保持同步
-
 - @todo 下次再编辑
 
 - @ques 编辑历史的 后退前进
-
-- @diff 上下两层不同的元素导致 下层无法被选中 怎么办？
-  - 原始的svg中有哪些需要被选中?
 
 - 要不要把 event destroy 移动到base中？
 - @ques 要不要做一个com列表
 
 ---
+
+- @todo 直接用konva渲染svg -> 完成现在的所有svg渲染功能
+  - 对比两者消耗的内容大小
+    - pixi 内存占用更少 cpu也更少
+    - konva 更少
+
+- @diff 上下两层不同的元素导致 下层无法被选中 怎么办？
+  - 原始的svg中有哪些需要被选中?
+
+- @diff 和pixi放大缩小保持同步
 
 - 修改stage的大小 scale
   - 自适应屏幕

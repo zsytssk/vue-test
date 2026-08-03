@@ -10,9 +10,9 @@
 // import Test from './page/camera-picture/index.vue'
 // import Test from './page/svg-viewer2/index.vue'
 // import Test from './page/svg-viewer3/index.vue'
-// import Test from './page/svg-editor/svg-editor.vue'
+import Test from './page/svg-editor2/svg-editor.vue'
 // import Test from './page/svg-viewer/index.vue'
-import Test from './page/svg-viewer-konva/index.vue'
+// import Test from './page/svg-viewer-konva/index.vue'
 // import Test from './page/i18n-test/index.vue'
 </script>
 
