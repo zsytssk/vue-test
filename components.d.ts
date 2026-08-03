@@ -15,6 +15,7 @@ declare module 'vue' {
     ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
     ElOption: typeof import('element-plus/es')['ElOption']
     ElSelect: typeof import('element-plus/es')['ElSelect']
+    ElSwitch: typeof import('element-plus/es')['ElSwitch']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     Html5QrCode: typeof import('./src/components/html5QrCode.vue')['default']
     InputWidgetScan: typeof import('./src/components/input-widget-sub/input-widget-scan.vue')['default']

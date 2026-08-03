@@ -20,6 +20,11 @@ https://github.com/konvajs/konva
   - 箭头
   - 文字
 
+- @todo 直接用konva渲染svg -> 完成现在的所有svg渲染功能
+  - 对比两者消耗的内容大小
+    - pixi 内存占用更少 cpu也更少
+    - konva 更少
+
 - @diff 和pixi放大缩小保持同步
 
 - @todo 下次再编辑
