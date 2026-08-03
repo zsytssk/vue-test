@@ -1,5 +1,36 @@
 ## 2026-08-03 11:20:52
 
+## 2026-07-30 10:20:23
+
+https://codesandbox.io/embed/github/polotno-project/polotno-site/tree/source/examples/polotno-demo?fontsize=11&hidenavigation=1&theme=dark&view=preview
+
+https://konvajs.org/docs/overview.html
+
+https://github.com/konvajs/konva
+
+- @todo
+  - 生成svg | 渲染svg
+  - 下次再编辑
+  - ***
+  - 在svg渲染层之上渲染
+  - 工具栏
+    - 新建 删除
+  - 属性侧边栏
+  - 选中某个组件
+  - 编辑大小 | 颜色
+  - 矩形
+  - 箭头
+  - 文字
+
+- @todo 下次再编辑
+
+- @ques 编辑历史的 后退前进
+
+- 要不要把 event destroy 移动到base中？
+- @ques 要不要做一个com列表
+
+---
+
 ```
 arrow!.on('dragmove', (e) => {
       const dx = e.evt.movementX || 0
@@ -31,37 +62,6 @@ arrow!.on('dragmove', (e) => {
     })
 这个movementX，movementY，要根据layer的scale做出修改 有没有什么更好的方式
 ```
-
-## 2026-07-30 10:20:23
-
-https://codesandbox.io/embed/github/polotno-project/polotno-site/tree/source/examples/polotno-demo?fontsize=11&hidenavigation=1&theme=dark&view=preview
-
-https://konvajs.org/docs/overview.html
-
-https://github.com/konvajs/konva
-
-- @todo
-  - 生成svg | 渲染svg
-  - 在svg渲染层之上渲染
-  - 下次再编辑
-  - ***
-  - 工具栏
-    - 新建 删除
-  - 属性侧边栏
-  - 选中某个组件
-  - 编辑大小 | 颜色
-  - 矩形
-  - 箭头
-  - 文字
-
-- @todo 下次再编辑
-
-- @ques 编辑历史的 后退前进
-
-- 要不要把 event destroy 移动到base中？
-- @ques 要不要做一个com列表
-
----
 
 - @todo 直接用konva渲染svg -> 完成现在的所有svg渲染功能
   - 对比两者消耗的内容大小

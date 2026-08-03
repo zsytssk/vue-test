@@ -25,7 +25,7 @@
             <el-button
               text
               size="small"
-              icon="view"
+              icon="aim"
               @click="triggerItemAction('view', item)"
             ></el-button>
             <el-button
