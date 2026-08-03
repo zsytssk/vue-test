@@ -5,21 +5,23 @@
     </div>
     <div ref="panelBody" :class="{ panelBody: true }">
       <div class="in-list">
-        <div class="panelRow" v-for="item of list" :key="item.id">
+        <div class="panelRow" v-for="(item, index) of list" :key="item.id">
           <div>{{ item.type }}</div>
           <div class="btn-list">
-            <!-- <el-button
+            <el-button
               text
               size="small"
               icon="arrow-up"
+              :disabled="index == 0"
               @click="triggerItemAction('up', item)"
             ></el-button>
             <el-button
               text
               size="small"
               icon="arrow-down"
+              :disabled="index == list.length - 1"
               @click="triggerItemAction('down', item)"
-            ></el-button> -->
+            ></el-button>
             <el-button
               text
               size="small"

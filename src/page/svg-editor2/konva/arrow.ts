@@ -9,12 +9,9 @@ import { useBase } from './base'
 
 export function useArrow(layer: Konva.Layer, pos: Position, editable = true) {
   const { emit, on, once, clear: EmEventClear } = EmEvent()
-  const { id } = useBase(layer)
-  const arrowGroup = new Konva.Group({
-    x: 0,
-    y: 0,
-    draggable: false, // 不直接拖动 Group，而是通过矩形拖动
-  })
+  const base = useBase(layer)
+  const { groupNode } = base
+
   let arrow: Arrow
   let borderRect: Rect
   let startHandle: Circle
@@ -38,35 +35,9 @@ export function useArrow(layer: Konva.Layer, pos: Position, editable = true) {
       draggable: true,
       strokeScaleEnabled: false,
     })
-    arrowGroup.add(arrow)
+    groupNode.add(arrow)
 
     if (editable) {
-      // ========== 4. 创建起点控制柄 ==========
-      startHandle = new Circle({
-        x: x1,
-        y: y1,
-        radius: 6,
-        fill: '#ffffff',
-        stroke: '#3b82f6',
-        strokeWidth: 2,
-        draggable: true,
-        strokeScaleEnabled: false,
-      })
-      arrowGroup.add(startHandle)
-
-      // ========== 5. 创建终点控制柄 ==========
-      endHandle = new Circle({
-        x: x2,
-        y: y2,
-        radius: 6,
-        fill: '#ffffff',
-        stroke: '#3b82f6',
-        strokeWidth: 2,
-        draggable: true,
-        strokeScaleEnabled: false,
-      })
-      arrowGroup.add(endHandle)
-
       // 计算角度
       const angle = Math.atan2(y2 - y1, x2 - x1)
       const degrees = angle * (180 / Math.PI)
@@ -85,10 +56,36 @@ export function useArrow(layer: Konva.Layer, pos: Position, editable = true) {
         strokeScaleEnabled: false,
       })
 
-      layer.add(borderRect)
+      groupNode.add(borderRect)
+
+      // ========== 4. 创建起点控制柄 ==========
+      startHandle = new Circle({
+        x: x1,
+        y: y1,
+        radius: 6,
+        fill: '#ffffff',
+        stroke: '#3b82f6',
+        strokeWidth: 2,
+        draggable: true,
+        strokeScaleEnabled: false,
+      })
+      groupNode.add(startHandle)
+
+      // ========== 5. 创建终点控制柄 ==========
+      endHandle = new Circle({
+        x: x2,
+        y: y2,
+        radius: 6,
+        fill: '#ffffff',
+        stroke: '#3b82f6',
+        strokeWidth: 2,
+        draggable: true,
+        strokeScaleEnabled: false,
+      })
+      groupNode.add(endHandle)
     }
 
-    layer.add(arrowGroup)
+    layer.add(groupNode)
     if (editable) {
       initEvent()
     }
@@ -188,11 +185,11 @@ export function useArrow(layer: Konva.Layer, pos: Position, editable = true) {
   }
 
   const destroy = () => {
-    if (!arrowGroup) {
+    if (!groupNode) {
       return
     }
     emit('destroy')
-    arrowGroup.destroy()
+    groupNode.destroy()
     borderRect?.destroy()
     EmEventClear()
   }
@@ -214,7 +211,7 @@ export function useArrow(layer: Konva.Layer, pos: Position, editable = true) {
   }
 
   return {
-    id,
+    ...base,
     type: 'arrow',
     getModel: () => arrow,
     on,

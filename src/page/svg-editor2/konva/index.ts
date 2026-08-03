@@ -16,6 +16,8 @@ export type KonvaCom = {
   init: () => void
   destroy: () => void
   getBounds: () => RectRange
+  setIndex: (index: number) => void
+  getIndex: () => number
   onSelect: () => void
   unSelect: () => void
   on: (event: string, callback: (data?: any) => void) => () => boolean

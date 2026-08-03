@@ -53,21 +53,21 @@ const triggerAction = (action: string) => {
   if (action == 'text') {
     const text = useText(layerRef.value!, pos)
     text.init()
-    components.value.push(text)
+    components.value.unshift(text)
     initComEvent(text)
     return
   }
   if (action == 'rect') {
     const rect = useRect(layerRef.value!, pos)
     rect.init()
-    components.value.push(rect)
+    components.value.unshift(rect)
     initComEvent(rect)
     return
   }
   if (action == 'arrow') {
     const arrow = useArrow(layerRef.value!, pos)
     arrow.init()
-    components.value.push(arrow)
+    components.value.unshift(arrow)
     initComEvent(arrow)
     return
   }
@@ -120,6 +120,17 @@ const triggerItemAction = (action: string, com: KonvaCom) => {
         item.unSelect()
       }
     }
+    return
+  }
+  if (action === 'up' || action === 'down') {
+    const curIndex = components.value.indexOf(com)
+    const nextIndex = action === 'down' ? curIndex + 1 : curIndex - 1
+    const nextCom = components.value[nextIndex]
+    components.value[nextIndex] = com
+    components.value[curIndex] = nextCom
+    const curZinDex = com.getIndex()
+    com.setIndex(nextCom.getIndex())
+    nextCom.setIndex(curZinDex)
     return
   }
 }

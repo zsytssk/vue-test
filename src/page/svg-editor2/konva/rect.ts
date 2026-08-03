@@ -8,11 +8,12 @@ import { useBase } from './base'
 import type { Position } from '@vueuse/core'
 
 export function useRect(layer: Konva.Layer, pos: Position, editable = true) {
-  // 创建文字
   let rect: Rect
   let transformer: Transformer
   const { emit, on, once, clear: EmEventClear } = EmEvent()
-  const { id, transLocalClientRect } = useBase(layer)
+  const base = useBase(layer)
+  const { groupNode, transLocalClientRect } = base
+
   const init = () => {
     // 创建文字
     rect = new Rect({
@@ -41,10 +42,11 @@ export function useRect(layer: Konva.Layer, pos: Position, editable = true) {
           return newBox
         },
       })
-      layer.add(transformer)
+      groupNode.add(transformer)
     }
 
-    layer.add(rect)
+    groupNode.add(rect)
+    layer.add(groupNode)
     initEvent()
   }
 
@@ -91,7 +93,7 @@ export function useRect(layer: Konva.Layer, pos: Position, editable = true) {
   }
 
   return {
-    id,
+    ...base,
     type: 'rect',
     getModel: () => rect,
     on,

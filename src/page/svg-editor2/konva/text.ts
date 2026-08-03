@@ -10,7 +10,8 @@ export function useText(layer: Konva.Layer, pos: Position, editable = true) {
   // 创建文字
   let transformer: Transformer
   const { emit, on, once, clear: EmEventClear } = EmEvent()
-  const { id, transLocalClientRect } = useBase(layer)
+  const base = useBase(layer)
+  const { groupNode, transLocalClientRect } = base
   let text: Text
 
   const init = () => {
@@ -23,7 +24,7 @@ export function useText(layer: Konva.Layer, pos: Position, editable = true) {
       fill: '#333333',
       draggable: editable, // 允许拖动
     })
-    layer.add(text)
+    groupNode.add(text)
 
     if (editable) {
       transformer = new Transformer({
@@ -46,9 +47,10 @@ export function useText(layer: Konva.Layer, pos: Position, editable = true) {
         },
       })
 
-      layer.add(transformer)
+      groupNode.add(transformer)
       initEvent()
     }
+    layer.add(groupNode)
   }
 
   const initEvent = () => {
@@ -90,7 +92,7 @@ export function useText(layer: Konva.Layer, pos: Position, editable = true) {
   }
 
   return {
-    id,
+    ...base,
     type: 'text',
     getModel: () => text,
     on,
