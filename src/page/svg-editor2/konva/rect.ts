@@ -12,7 +12,7 @@ export function useRect(layer: Konva.Layer, pos: Position, editable = true) {
   let rect: Rect
   let transformer: Transformer
   const { emit, on, once, clear: EmEventClear } = EmEvent()
-  const base = useBase()
+  const { id, transLocalClientRect } = useBase(layer)
   const init = () => {
     // 创建文字
     rect = new Rect({
@@ -74,11 +74,16 @@ export function useRect(layer: Konva.Layer, pos: Position, editable = true) {
     EmEventClear()
   }
 
+  const getBounds = () => {
+    return transLocalClientRect(rect.getClientRect())
+  }
+
   const onSelect = () => {
     transformer?.borderStroke(Config.strokeColorActive)
     transformer?.anchorStroke(Config.strokeColorActive)
     layer.batchDraw()
   }
+
   const unSelect = () => {
     transformer?.borderStroke(Config.strokeColor)
     transformer?.anchorStroke(Config.strokeColor)
@@ -86,7 +91,7 @@ export function useRect(layer: Konva.Layer, pos: Position, editable = true) {
   }
 
   return {
-    ...base,
+    id,
     type: 'rect',
     getModel: () => rect,
     on,
@@ -95,5 +100,6 @@ export function useRect(layer: Konva.Layer, pos: Position, editable = true) {
     destroy,
     onSelect,
     unSelect,
+    getBounds,
   } as KonvaCom
 }

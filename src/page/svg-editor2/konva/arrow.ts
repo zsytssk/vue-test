@@ -9,7 +9,7 @@ import { useBase } from './base'
 
 export function useArrow(layer: Konva.Layer, pos: Position, editable = true) {
   const { emit, on, once, clear: EmEventClear } = EmEvent()
-  const base = useBase()
+  const { id } = useBase(layer)
   const arrowGroup = new Konva.Group({
     x: 0,
     y: 0,
@@ -197,6 +197,15 @@ export function useArrow(layer: Konva.Layer, pos: Position, editable = true) {
     EmEventClear()
   }
 
+  const getBounds = () => {
+    return {
+      x: x1,
+      y: y1,
+      width: x2 - x1,
+      height: y2 - y1,
+    }
+  }
+
   const onSelect = () => {
     borderRect.stroke(Config.strokeColorActive)
   }
@@ -205,7 +214,7 @@ export function useArrow(layer: Konva.Layer, pos: Position, editable = true) {
   }
 
   return {
-    ...base,
+    id,
     type: 'arrow',
     getModel: () => arrow,
     on,
@@ -214,5 +223,6 @@ export function useArrow(layer: Konva.Layer, pos: Position, editable = true) {
     destroy,
     onSelect,
     unSelect,
+    getBounds,
   } as KonvaCom
 }

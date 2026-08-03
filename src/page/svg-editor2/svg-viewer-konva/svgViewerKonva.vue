@@ -10,6 +10,7 @@ import { Rect } from 'konva/lib/shapes/Rect'
 import { onMounted, onUnmounted, ref, watch } from 'vue'
 import type { PosRange } from './konvaUtils'
 import { useElementSize } from '@vueuse/core'
+import type { RectRange } from '../konva'
 
 const props = defineProps<{
   url: string
@@ -164,6 +165,27 @@ const viewRect = (id: number, jump = true) => {
   }
 }
 
+const jumpToRect = (range: RectRange) => {
+  const stage = stageRef.value!
+  let boundsWidth = range.width
+  let boundsHeight = range.height
+  // 稍微放大一些空间
+  boundsWidth = boundsWidth + boundsWidth / 2
+  boundsHeight = boundsHeight + boundsHeight / 2
+  const scale = Math.min(
+    stage.width() / boundsWidth,
+    stage.height() / boundsHeight,
+  )
+
+  jumpTo(
+    {
+      x: range.x + range.width / 2,
+      y: range.y + range.height / 2,
+    },
+    scale,
+  )
+}
+
 const getViewpoint = (type = 'out' as 'inner' | 'out') => {
   const stage = stageRef.value!
   const layer = layerRef.value!
@@ -263,6 +285,7 @@ defineExpose({
     layer: layerRef.value,
   }),
   jumpTo,
+  jumpToRect,
   viewRect,
   centerGraphic,
   renderRectList,

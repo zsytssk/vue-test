@@ -2,7 +2,7 @@
   <div class="box">
     <div class="toolBox">
       <Toolbar :triggerAction="triggerAction" />
-      <el-button @click="testFn">test</el-button>
+      <el-button @click="testFn" icon="grid" text></el-button>
     </div>
     <div class="in-main">
       <SvgViewerKonva :onLoad="onLoad" ref="svgViewerRef" />
@@ -10,6 +10,7 @@
         <Text v-if="curComRef?.type == 'text'" :com="curComRef" />
         <Rect v-if="curComRef?.type == 'rect'" :com="curComRef" />
         <Arrow v-if="curComRef?.type == 'arrow'" :com="curComRef" />
+        <ComList :list="components" :triggerItemAction="triggerItemAction" />
       </div>
     </div>
   </div>
@@ -25,6 +26,7 @@ import Rect from './components/editPanel/rect.vue'
 import Arrow from './components/editPanel/arrow.vue'
 import { useElementSize } from '@vueuse/core'
 import SvgViewerKonva from './svg-viewer-konva/index.vue'
+import ComList from './components/comList.vue'
 
 const stageRef = ref<Konva.Stage>()
 const layerRef = ref<Konva.Layer>()
@@ -100,12 +102,33 @@ const onLoad = () => {
   stageRef.value = stage
 }
 
+const triggerItemAction = (action: string, com: KonvaCom) => {
+  if (action === 'delete') {
+    com.destroy()
+    return
+  }
+  if (action === 'view') {
+    const inner = svgViewerRef.value?.getInner()
+    if (!inner) {
+      return
+    }
+    inner.jumpToRect(com.getBounds())
+    for (const item of components.value) {
+      if (item.id === com.id) {
+        item.onSelect()
+      } else {
+        item.unSelect()
+      }
+    }
+    return
+  }
+}
 const testFn = () => {
+  curComRef.value = undefined
   const inner = svgViewerRef.value?.getInner()
   if (!inner) {
     return
   }
-  console.log(`test:>inner`, inner.getViewpoint())
 }
 
 // onMounted(() => {

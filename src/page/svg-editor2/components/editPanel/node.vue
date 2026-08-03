@@ -2,7 +2,7 @@
   <div class="panelBox">
     <div class="panelTitle">
       <span>{{ name }}</span>
-      <el-button icon="delete" text size="small" @click="delModel"></el-button>
+      <!-- <el-button icon="delete" text size="small" @click="delModel"></el-button> -->
     </div>
     <div ref="panelBody" :class="{ panelBody: true }">
       <slot></slot>

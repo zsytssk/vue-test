@@ -10,7 +10,7 @@ export function useText(layer: Konva.Layer, pos: Position, editable = true) {
   // 创建文字
   let transformer: Transformer
   const { emit, on, once, clear: EmEventClear } = EmEvent()
-  const base = useBase()
+  const { id, transLocalClientRect } = useBase(layer)
   let text: Text
 
   const init = () => {
@@ -76,6 +76,10 @@ export function useText(layer: Konva.Layer, pos: Position, editable = true) {
     EmEventClear()
   }
 
+  const getBounds = () => {
+    return transLocalClientRect(text.getClientRect())
+  }
+
   const onSelect = () => {
     transformer?.borderStroke(Config.strokeColorActive)
     transformer?.anchorStroke(Config.strokeColorActive)
@@ -86,7 +90,7 @@ export function useText(layer: Konva.Layer, pos: Position, editable = true) {
   }
 
   return {
-    ...base,
+    id,
     type: 'text',
     getModel: () => text,
     on,
@@ -95,5 +99,6 @@ export function useText(layer: Konva.Layer, pos: Position, editable = true) {
     destroy,
     onSelect,
     unSelect,
+    getBounds,
   } as KonvaCom
 }
