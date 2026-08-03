@@ -2,7 +2,14 @@
   <div class="box">
     <div class="toolBox">
       <Toolbar :triggerAction="triggerAction" />
-      <el-button @click="testFn" icon="grid" text></el-button>
+      <div class="toolRight">
+        <el-button @click="centerView" text>
+          <el-icon size="20"><FullScreen /></el-icon>
+        </el-button>
+        <el-button @click="showList" text>
+          <el-icon size="20"><Grid /></el-icon>
+        </el-button>
+      </div>
     </div>
     <div class="in-main">
       <SvgViewerKonva :onLoad="onLoad" ref="svgViewerRef" />
@@ -134,12 +141,20 @@ const triggerItemAction = (action: string, com: KonvaCom) => {
     return
   }
 }
-const testFn = () => {
+const showList = () => {
   curComRef.value = undefined
   const inner = svgViewerRef.value?.getInner()
   if (!inner) {
     return
   }
+}
+
+const centerView = () => {
+  const inner = svgViewerRef.value?.getInner()
+  if (!inner) {
+    return
+  }
+  inner.centerGraphic()
 }
 
 // onMounted(() => {
@@ -171,6 +186,14 @@ const testFn = () => {
     align-items: center;
     justify-content: space-between;
     border: 1px solid var(--el-border-color-light);
+    .toolRight {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      .el-button {
+        margin-left: 0;
+      }
+    }
   }
   .in-main {
     flex: 1;

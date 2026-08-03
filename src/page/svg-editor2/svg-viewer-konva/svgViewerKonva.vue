@@ -27,8 +27,8 @@ const centerGraphic = () => {
   const stage = stageRef.value!
   const bounds = layer.getClientRect()
   const scale = Math.min(
-    stage.width() / bounds.width,
-    stage.height() / bounds.height,
+    stage.width() / (bounds.width / layer.scaleX()),
+    stage.height() / (bounds.height / layer.scaleX()),
   )
   layer.scaleX(scale)
   layer.scaleY(scale)
@@ -236,8 +236,6 @@ watch(
     }
     stage.width(width.value)
     stage.height(height.value)
-    layer.scaleX(1)
-    layer.scaleY(1)
     centerGraphic()
   },
 )
