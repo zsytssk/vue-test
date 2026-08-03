@@ -10,6 +10,8 @@ declare module 'vue' {
   export interface GlobalComponents {
     ElButton: typeof import('element-plus/es')['ElButton']
     ElColorPicker: typeof import('element-plus/es')['ElColorPicker']
+    ElDialog: typeof import('element-plus/es')['ElDialog']
+    ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElIcon: typeof import('element-plus/es')['ElIcon']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
@@ -18,6 +20,7 @@ declare module 'vue' {
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     Html5QrCode: typeof import('./src/components/html5QrCode.vue')['default']
+    Html5QrCode2: typeof import('./src/components/html5QrCode2/index.vue')['default']
     InputWidgetScan: typeof import('./src/components/input-widget-sub/input-widget-scan.vue')['default']
     RxingWasm: typeof import('./src/components/rxing-wasm.vue')['default']
     ShowTooltip: typeof import('./src/components/show-tooltip/show-tooltip.vue')['default']
