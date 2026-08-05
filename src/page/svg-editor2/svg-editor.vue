@@ -55,6 +55,7 @@ import ComList from './components/comList.vue'
 import { generateId } from './konva/base.ts'
 import Folder from './components/editPanel/folder.vue'
 import MoveToFolderDialog from './components/moveToFolderDialog.vue'
+import { calcGroupRect, flatTreeData } from './hooks/utils.ts'
 
 export type CompFolder = {
   type: 'folder'
@@ -122,7 +123,8 @@ const triggerAction = (action: string) => {
 const initComEvent = (com: KonvaCom) => {
   com.on('focus', () => {
     curComRef.value = com
-    for (const item of components.value) {
+    const comList = flatTreeData(components.value as any[]) as CompItem[]
+    for (const item of comList) {
       if (item.type === 'folder') {
         continue
       }
@@ -151,6 +153,15 @@ const triggerItemAction = (
   parent?: CompFolder,
 ) => {
   if (com.type === 'folder') {
+    if (action === 'view') {
+      const inner = svgViewerRef.value?.getInner()
+      if (!inner || !com.children?.length) {
+        return
+      }
+      inner.jumpToRect(calcGroupRect(com.children))
+      return
+    }
+
     if (action === 'edit') {
       curComRef.value = com
       return
@@ -185,8 +196,9 @@ const triggerItemAction = (
     com.destroy()
     if (parent) {
       parent.children = parent.children.filter((item) => item.id !== com.id)
+    } else {
+      components.value = components.value.filter((item) => item.id !== com.id)
     }
-    components.value = components.value.filter((item) => item.id !== com.id)
     return
   }
   if (action === 'view') {

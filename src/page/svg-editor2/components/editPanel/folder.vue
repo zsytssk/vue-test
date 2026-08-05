@@ -43,8 +43,9 @@ const name = computed({
   },
 })
 const localTriggerItemAction = (action: string, com: CompItem) => {
+  const selfCom = com as KonvaCom
+
   if (action === 'up' || action === 'down') {
-    const selfCom = com as KonvaCom
     const parent = props.com!
     const curIndex = parent.children.indexOf(selfCom)
     const nextIndex = action === 'down' ? curIndex + 1 : curIndex - 1
