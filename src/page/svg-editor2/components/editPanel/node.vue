@@ -16,10 +16,11 @@ const props = defineProps<{
   name: string
   com?: KonvaCom
   readOnly?: boolean
+  triggerItemAction: (action: string, item: KonvaCom) => void
 }>()
 
 const delModel = () => {
-  props.com?.destroy()
+  props.triggerItemAction('delete', props.com!)
 }
 </script>
 <style lang="scss" scoped></style>

@@ -5,7 +5,39 @@
     </div>
     <div ref="panelBody" :class="{ panelBody: true }">
       <div class="in-list">
-        <div class="panelRow" v-for="(item, index) of list" :key="item.id">
+        <div
+          class="panelRow"
+          v-for="(item, index) of folderList"
+          :key="item.id"
+        >
+          <div>{{ (item as CompFolder).name || item.type }}</div>
+          <div class="btn-list">
+            <el-button
+              text
+              size="small"
+              icon="edit"
+              v-if="item.type == 'folder'"
+              @click="triggerItemAction('edit', item)"
+            ></el-button>
+            <el-button
+              text
+              size="small"
+              icon="aim"
+              @click="triggerItemAction('view', item)"
+            ></el-button>
+            <el-button
+              text
+              size="small"
+              icon="delete"
+              @click="triggerItemAction('delete', item)"
+            ></el-button>
+          </div>
+        </div>
+        <div
+          class="panelRow"
+          v-for="(item, index) of noFolderList"
+          :key="item.id"
+        >
           <div>{{ item.type }}</div>
           <div class="btn-list">
             <el-button
@@ -21,6 +53,12 @@
               icon="arrow-down"
               :disabled="index == list.length - 1"
               @click="triggerItemAction('down', item)"
+            ></el-button>
+            <el-button
+              text
+              size="small"
+              icon="DArrowRight"
+              @click="triggerItemAction('moveToFolder', item)"
             ></el-button>
             <el-button
               text
@@ -41,12 +79,20 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { KonvaCom } from '../konva/index.ts'
+import { computed } from 'vue'
+import type { CompFolder, CompItem } from '../svg-editor.vue'
 
-defineProps<{
-  list: KonvaCom[]
-  triggerItemAction: (action: string, item: KonvaCom) => void
+const props = defineProps<{
+  list: CompItem[]
+  triggerItemAction: (action: string, item: CompItem) => void
 }>()
+
+const folderList = computed(() => {
+  return props.list.filter((item) => item.type === 'folder')
+})
+const noFolderList = computed(() => {
+  return props.list.filter((item) => item.type !== 'folder')
+})
 </script>
 
 <style lang="scss" scoped>

@@ -14,12 +14,30 @@
     <div class="in-main">
       <SvgViewerKonva :onLoad="onLoad" ref="svgViewerRef" />
       <div class="editPanel" :key="curComRef?.id">
-        <Text v-if="curComRef?.type == 'text'" :com="curComRef" />
-        <Rect v-if="curComRef?.type == 'rect'" :com="curComRef" />
-        <Arrow v-if="curComRef?.type == 'arrow'" :com="curComRef" />
+        <Text
+          v-if="curComRef?.type == 'text'"
+          :com="curComRef"
+          :triggerItemAction="triggerItemAction"
+        />
+        <Rect
+          v-if="curComRef?.type == 'rect'"
+          :com="curComRef"
+          :triggerItemAction="triggerItemAction"
+        />
+        <Arrow
+          v-if="curComRef?.type == 'arrow'"
+          :com="curComRef"
+          :triggerItemAction="triggerItemAction"
+        />
+        <Folder
+          v-if="curComRef?.type == 'folder'"
+          :com="curComRef"
+          :triggerItemAction="triggerItemAction"
+        />
         <ComList :list="components" :triggerItemAction="triggerItemAction" />
       </div>
     </div>
+    <MoveToFolderDialog ref="moveToFolderRef" />
   </div>
 </template>
 
@@ -34,12 +52,23 @@ import Arrow from './components/editPanel/arrow.vue'
 import { useElementSize } from '@vueuse/core'
 import SvgViewerKonva from './svg-viewer-konva/index.vue'
 import ComList from './components/comList.vue'
+import { generateId } from './konva/base.ts'
+import Folder from './components/editPanel/folder.vue'
+import MoveToFolderDialog from './components/moveToFolderDialog.vue'
 
+export type CompFolder = {
+  type: 'folder'
+  id: string
+  name: string
+  children: KonvaCom[]
+}
+export type CompItem = CompFolder | KonvaCom
 const stageRef = ref<Konva.Stage>()
+const moveToFolderRef = ref<InstanceType<typeof MoveToFolderDialog>>()
 const layerRef = ref<Konva.Layer>()
 const boxRef = ref<HTMLDivElement>()
-const components = ref([] as KonvaCom[])
-const curComRef = ref<KonvaCom>()
+const components = ref([] as CompItem[])
+const curComRef = ref<CompItem>()
 const svgViewerRef = ref<InstanceType<typeof SvgViewerKonva>>()
 const { width, height } = useElementSize(boxRef)
 
@@ -54,6 +83,16 @@ watch(
 const triggerAction = (action: string) => {
   const inner = svgViewerRef.value?.getInner()
   if (!inner) {
+    return
+  }
+  if (action === 'folder') {
+    const folder = {
+      type: 'folder',
+      id: generateId(),
+      name: 'folder',
+      children: [],
+    } as CompFolder
+    components.value.unshift(folder)
     return
   }
   const pos = inner.getViewpoint('inner')
@@ -84,18 +123,15 @@ const initComEvent = (com: KonvaCom) => {
   com.on('focus', () => {
     curComRef.value = com
     for (const item of components.value) {
+      if (item.type === 'folder') {
+        continue
+      }
       if (item.id === com.id) {
-        item.onSelect()
+        ;(item as KonvaCom).onSelect()
       } else {
-        item.unSelect()
+        ;(item as KonvaCom).unSelect()
       }
     }
-  })
-  com.on('destroy', () => {
-    if (curComRef.value?.id === com.id) {
-      curComRef.value = undefined
-    }
-    components.value = components.value.filter((item) => item.id !== com.id)
   })
 }
 
@@ -109,9 +145,48 @@ const onLoad = () => {
   stageRef.value = stage
 }
 
-const triggerItemAction = (action: string, com: KonvaCom) => {
+const triggerItemAction = (
+  action: string,
+  com: CompItem,
+  parent?: CompFolder,
+) => {
+  if (com.type === 'folder') {
+    if (action === 'edit') {
+      curComRef.value = com
+      return
+    }
+    if (action === 'delete') {
+      for (const item of com.children) {
+        item.destroy()
+      }
+      com.children = []
+      components.value = components.value.filter((item) => item.id !== com.id)
+      return
+    }
+    return
+  }
+  if (action === 'moveToFolder') {
+    moveToFolderRef.value
+      ?.openDialog(components.value.filter((item) => item.type === 'folder'))
+      .then((selectId) => {
+        if (!selectId) {
+          return
+        }
+        const selectGroup = components.value.find(
+          (item) => item.id === selectId,
+        )
+        ;(selectGroup as CompFolder)?.children.unshift(com)
+        components.value = components.value.filter((item) => item.id !== com.id)
+      })
+    return
+  }
+
   if (action === 'delete') {
     com.destroy()
+    if (parent) {
+      parent.children = parent.children.filter((item) => item.id !== com.id)
+    }
+    components.value = components.value.filter((item) => item.id !== com.id)
     return
   }
   if (action === 'view') {
@@ -121,10 +196,13 @@ const triggerItemAction = (action: string, com: KonvaCom) => {
     }
     inner.jumpToRect(com.getBounds())
     for (const item of components.value) {
+      if (item.type === 'folder') {
+        continue
+      }
       if (item.id === com.id) {
-        item.onSelect()
+        ;(item as KonvaCom).onSelect()
       } else {
-        item.unSelect()
+        ;(item as KonvaCom).unSelect()
       }
     }
     return
@@ -135,9 +213,12 @@ const triggerItemAction = (action: string, com: KonvaCom) => {
     const nextCom = components.value[nextIndex]
     components.value[nextIndex] = com
     components.value[curIndex] = nextCom
+    if (nextCom.type == 'folder') {
+      return
+    }
     const curZinDex = com.getIndex()
-    com.setIndex(nextCom.getIndex())
-    nextCom.setIndex(curZinDex)
+    com.setIndex((nextCom as KonvaCom)?.getIndex())
+    ;(nextCom as KonvaCom).setIndex(curZinDex)
     return
   }
 }

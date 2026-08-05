@@ -1,5 +1,19 @@
 ## 2026-08-03 11:20:52
 
+- components 逻辑要单独搞一个store或者文件夹之类的
+
+- @ques 移动folder中的元素
+  - 换位置 删除
+
+- folder 聚焦视野
+
+- @todo
+  - 生成svg | 渲染svg
+  - 下次再编辑
+  - 合并分组
+
+- svg-editor.vue 内容太多了
+
 ## 2026-07-30 10:20:23
 
 https://codesandbox.io/embed/github/polotno-project/polotno-site/tree/source/examples/polotno-demo?fontsize=11&hidenavigation=1&theme=dark&view=preview
@@ -11,6 +25,7 @@ https://github.com/konvajs/konva
 - @todo
   - 生成svg | 渲染svg
   - 下次再编辑
+  - 合并分组
   - ***
   - 在svg渲染层之上渲染
   - 工具栏

@@ -11,7 +11,7 @@ export type RectRange = {
 }
 export type KonvaCom = {
   id: string
-  type: string
+  type: 'rect' | 'arrow' | 'text'
   getModel: () => Konva.Node
   init: () => void
   destroy: () => void

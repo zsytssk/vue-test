@@ -1,5 +1,5 @@
 <template>
-  <Node name="Rect" :com="com">
+  <Node name="Rect" :com="com" :triggerItemAction="triggerItemAction">
     <div class="panelRow">
       <div>
         <span style="color: red">*</span>
@@ -22,7 +22,11 @@ import { computed } from 'vue'
 import { useKonvaValue } from '../../hooks/useKonvaValue'
 import type { KonvaCom } from '../../konva'
 import Node from './node.vue'
-const props = defineProps<{ com?: KonvaCom; readOnly?: boolean }>()
+const props = defineProps<{
+  com?: KonvaCom
+  readOnly?: boolean
+  triggerItemAction: (action: string, item: KonvaCom) => void
+}>()
 
 const model = computed(() => props.com?.getModel())
 const color = useKonvaValue(model, 'stroke')
