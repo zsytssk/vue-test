@@ -8,9 +8,21 @@ import type { KonvaEventObject } from 'konva/lib/Node'
 import { Image } from 'konva/lib/shapes/Image'
 import { Rect } from 'konva/lib/shapes/Rect'
 import { onMounted, onUnmounted, ref, watch } from 'vue'
-import type { PosRange } from './konvaUtils'
 import { useElementSize } from '@vueuse/core'
-import type { RectRange } from '../konva'
+
+export type PosRange = {
+  ID: number
+  sx: number
+  sy: number
+  ex: number
+  ey: number
+}
+export type RectRange = {
+  width: number
+  height: number
+  x: number
+  y: number
+}
 
 const props = defineProps<{
   url: string

@@ -10,7 +10,8 @@
 // import Test from './page/camera-picture/index.vue'
 // import Test from './page/svg-viewer2/index.vue'
 // import Test from './page/svg-viewer3/index.vue'
-import Test from './page/svg-editor2/svg-editor.vue'
+// import Test from './page/svg-editor2/svg-editor.vue'
+import Test from './page/threejs-test/threejs-test.vue'
 // import Test from './page/svg-viewer/index.vue'
 // import Test from './page/svg-viewer-konva/index.vue'
 // import Test from './page/i18n-test/index.vue'
@@ -19,7 +20,14 @@ import Test from './page/svg-editor2/svg-editor.vue'
 <template>
   <!-- <RxingWasm /> -->
   <!-- <HTML5Qrcode /> -->
-  <Test />
+  <div class="app-container">
+    <Test
+      showDebug
+      :autoRotate="false"
+      :cameraDistance="1"
+      modelUrl="http://172.18.40.57/glb-files/glb/7a03bac2692f8d17e2cda1b0721ffd0e_20260819091648.glb"
+    />
+  </div>
   <!-- <div>
     <i class="fa-regular fa-user test keepPX"></i>
     sdfsdfs
@@ -29,5 +37,9 @@ import Test from './page/svg-editor2/svg-editor.vue'
 <style scoped>
 .test.keepPX {
   font-size: 20px;
+}
+.app-container {
+  width: 100vw;
+  height: 100vh;
 }
 </style>
