@@ -94,7 +94,7 @@ async function loadPDF(url: string) {
 
     eventBus.on('pagesinit', () => {
       console.log('PDF 页面结构初始化完成，可以安全跳转了！')
-      jumpToPageAndPosition(2, 1.5, 100, 100) // 此时调用绝对安全，不会报错
+      jumpToPageAndPosition(2, 1.5, 100, -100) // 此时调用绝对安全，不会报错
     })
 
     // 等待 DOM 渲染完成后更新布局
